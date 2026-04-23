@@ -3,122 +3,466 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CleanTrack — Power Apps Prototype</title>
+<title>CleanTrack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', sans-serif; background: #e5e5e5; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #1a3a5c;
+  --blue-mid: #2a5a8c;
+  --blue-light: #e8f1fa;
+  --green: #1a7a4a;
+  --green-light: #e6f5ee;
+  --amber: #7a5200;
+  --amber-light: #fef7e6;
+  --purple: #5b3a8c;
+  --purple-light: #f3eeff;
+  --red: #b91c1c;
+  --red-light: #fef2f2;
+  --gray-50: #f8f9fb;
+  --gray-100: #f0f2f5;
+  --gray-200: #e2e6ec;
+  --gray-400: #9aa3b0;
+  --gray-600: #5a6478;
+  --gray-900: #111827;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #dde3ec;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 100vh;
+}
+
 h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-.screen-nav { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; justify-content: center; }
-.snav-btn { font-size: 11px; padding: 4px 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 2px; color: #444; font-family: 'Segoe UI', sans-serif; }
-.snav-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
-.pa-shell { width: 390px; background: #f5f5f5; border: 1px solid #bbb; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-.pa-screen { display: none; flex-direction: column; min-height: 680px; }
+
+/* Screen nav */
+/* App shell */
+.pa-shell {
+  width: 390px;
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.pa-screen { display: none; flex-direction: column; min-height: 700px; }
 .pa-screen.active { display: flex; }
-.pa-header { background: #1a3a5c; color: #fff; padding: 0 16px; height: 48px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.pa-header-title { font-size: 15px; font-weight: 600; }
-.pa-back { font-size: 13px; color: #cce0f5; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Segoe UI', sans-serif; }
-.pa-body { flex: 1; padding: 16px; background: #f5f5f5; overflow-y: auto; }
-.pa-label { font-size: 12px; color: #444; margin-bottom: 4px; margin-top: 14px; display: block; }
-.pa-label:first-child { margin-top: 0; }
-.pa-dropdown { width: 100%; height: 36px; border: 1px solid #8a8886; background: #fff; font-size: 14px; color: #111; padding: 0 30px 0 8px; border-radius: 2px; appearance: none; font-family: 'Segoe UI', sans-serif; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
-.pa-dropdown:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
-.pa-input { width: 100%; height: 36px; border: 1px solid #8a8886; background: #fff; font-size: 14px; color: #111; padding: 0 8px; border-radius: 2px; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.15em; }
-.pa-input:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
-.pa-error { background: #fde7e9; border-left: 3px solid #c4262e; color: #6e0811; font-size: 12px; padding: 8px 10px; margin-top: 8px; display: none; }
-.pa-btn { width: 100%; height: 40px; background: #1a3a5c; color: #fff; border: none; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 2px; margin-top: 16px; font-family: 'Segoe UI', sans-serif; }
-.pa-btn:hover { background: #22507a; }
-.pa-section-label { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+
+/* Header */
+.pa-header {
+  background: var(--blue);
+  color: #fff;
+  padding: 0 20px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.pa-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.pa-back {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s;
+}
+.pa-back:hover { color: #fff; }
+
+/* Body */
+.pa-body { flex: 1; padding: 20px; background: var(--gray-50); overflow-y: auto; }
+
+/* Login screen */
+.login-logo {
+  text-align: center;
+  margin: 8px 0 32px;
+}
+.login-logo-mark {
+  width: 56px;
+  height: 56px;
+  background: var(--blue);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(26,58,92,0.3);
+}
+.login-title { font-size: 22px; font-weight: 600; color: var(--gray-900); letter-spacing: -0.02em; }
+.login-sub { font-size: 14px; color: var(--gray-400); margin-top: 4px; }
+
+.pa-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 6px;
+  margin-top: 16px;
+  display: block;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.pa-label:first-of-type { margin-top: 0; }
+
+.pa-dropdown {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid var(--gray-200);
+  background: #fff;
+  font-size: 15px;
+  color: var(--gray-900);
+  padding: 0 40px 0 14px;
+  border-radius: var(--radius-sm);
+  appearance: none;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa3b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+.pa-dropdown:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
+
+.pa-input {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid var(--gray-200);
+  background: #fff;
+  font-size: 15px;
+  color: var(--gray-900);
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.25em;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+.pa-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
+
+.pa-error {
+  background: var(--red-light);
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-sm);
+  color: var(--red);
+  font-size: 13px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  display: none;
+  font-weight: 500;
+}
+
+.pa-btn {
+  width: 100%;
+  height: 48px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-top: 20px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: -0.01em;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(26,58,92,0.25);
+}
+.pa-btn:hover { background: var(--blue-mid); }
+.pa-btn:active { transform: scale(0.99); }
+
+/* Section label */
+.pa-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 20px 0 10px;
+}
 .pa-section-label:first-child { margin-top: 0; }
-.pa-gallery-item { background: #fff; border: 1px solid #ddd; padding: 12px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-.pa-gallery-item:hover { background: #f0f6ff; border-color: #1a3a5c; }
-.pa-gallery-title { font-size: 14px; font-weight: 600; color: #111; }
-.pa-gallery-sub { font-size: 12px; color: #666; margin-top: 2px; }
-.pa-badge { font-size: 11px; padding: 3px 8px; font-weight: 600; border-radius: 2px; white-space: nowrap; }
-.badge-done { background: #dff6dd; color: #107c10; border: 1px solid #107c10; }
-.badge-pending { background: #fff4ce; color: #7a5500; border: 1px solid #7a5500; }
-.badge-inprog { background: #cce0f5; color: #0c3a6e; border: 1px solid #0c3a6e; }
-.badge-policed { background: #f3e8ff; color: #5c2d91; border: 1px solid #5c2d91; }
-.pa-btn-secondary { width: 100%; height: 40px; background: #fff; color: #1a3a5c; border: 1px solid #1a3a5c; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 2px; margin-top: 8px; font-family: 'Segoe UI', sans-serif; }
-.pa-btn-secondary:hover { background: #f0f6ff; }
-.pa-checkbox-row { background: #fff; border: 1px solid #ddd; padding: 10px 12px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-.pa-checkbox-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1a3a5c; flex-shrink: 0; cursor: pointer; }
-.pa-checkbox-row label { font-size: 13px; color: #111; cursor: pointer; flex: 1; }
-.pa-checkbox-row label.done { color: #888; text-decoration: line-through; }
-.pa-textarea { width: 100%; border: 1px solid #8a8886; background: #fff; font-size: 13px; color: #111; padding: 8px; border-radius: 2px; font-family: 'Segoe UI', sans-serif; resize: none; }
-.pa-textarea:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
-.pa-footer { padding: 12px 16px; background: #fff; border-top: 1px solid #ddd; flex-shrink: 0; }
-.pa-overlay { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.92); z-index:10; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
-.pa-overlay.active { display:flex; }
-.pa-overlay-text { font-size:14px; color:#444; font-family:'Segoe UI',sans-serif; }
-.pa-overlay-success { font-size:14px; color:#107c10; font-weight:600; font-family:'Segoe UI',sans-serif; }
-.pa-overlay-error { font-size:14px; color:#c4262e; font-weight:600; font-family:'Segoe UI',sans-serif; }
-.pa-progress-bar { width: 100%; height: 8px; background: #ddd; margin-bottom: 4px; }
-.pa-progress-fill { height: 100%; background: #107c10; transition: width 0.2s; }
-.pa-progress-text { font-size: 12px; color: #444; margin-bottom: 10px; }
+
+/* Search bar */
+.search-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.pa-search {
+  width: 100%;
+  height: 42px;
+  border: 1.5px solid var(--gray-200);
+  background: #fff;
+  font-size: 14px;
+  color: var(--gray-900);
+  padding: 0 14px 0 38px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+.pa-search:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.10); }
+.pa-search::placeholder { color: var(--gray-400); }
+.search-empty { text-align: center; padding: 32px 0; font-size: 14px; color: var(--gray-400); display: none; }
+
+/* Gallery items — buildings */
+.pa-gallery-item {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  box-shadow: var(--shadow-sm);
+}
+.pa-gallery-item:hover {
+  border-color: var(--blue);
+  box-shadow: 0 4px 12px rgba(26,58,92,0.12);
+  transform: translateY(-1px);
+}
+.pa-gallery-item:active { transform: scale(0.99); }
+.pa-gallery-title { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+.pa-gallery-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+/* Badges */
+.pa-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.badge-done { background: var(--green-light); color: var(--green); }
+.badge-pending { background: var(--amber-light); color: var(--amber); }
+.badge-inprog { background: var(--blue-light); color: var(--blue); }
+.badge-policed { background: var(--purple-light); color: var(--purple); }
+
+/* Secondary button */
+.pa-btn-secondary {
+  width: 100%;
+  height: 48px;
+  background: #fff;
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s;
+}
+.pa-btn-secondary:hover { background: var(--blue-light); }
+
+/* Checkboxes */
+.pa-checkbox-row {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.15s;
+}
+.pa-checkbox-row:has(input:checked) { border-color: var(--gray-200); background: var(--gray-50); }
+.pa-checkbox-row input[type=checkbox] {
+  width: 18px; height: 18px;
+  accent-color: var(--blue);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.pa-checkbox-row label { font-size: 14px; color: var(--gray-900); cursor: pointer; flex: 1; line-height: 1.4; }
+.pa-checkbox-row label.done { color: var(--gray-400); text-decoration: line-through; }
+
+/* Comment box */
+.pa-textarea {
+  width: 100%;
+  border: 1.5px solid var(--gray-200);
+  background: #fff;
+  font-size: 14px;
+  color: var(--gray-900);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  resize: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.5;
+}
+.pa-textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
+
+/* Footer */
+.pa-footer {
+  padding: 16px 20px;
+  background: #fff;
+  border-top: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+/* Progress bar */
+.pa-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 99px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.pa-progress-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+.pa-progress-text { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; font-weight: 500; }
+
+/* Overlay */
+.pa-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,255,255,0.94);
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  backdrop-filter: blur(4px);
+}
+.pa-overlay.active { display: flex; }
+.pa-overlay-text { font-size: 15px; color: var(--gray-600); font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.pa-overlay-success { font-size: 15px; color: var(--green); font-weight: 600; font-family: 'DM Sans', sans-serif; }
+.pa-overlay-error { font-size: 15px; color: var(--red); font-weight: 600; font-family: 'DM Sans', sans-serif; }
+
+/* Spinner */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
-<h2 class="sr-only">CleanTrack Power Apps prototype with four screens: login, buildings, rooms, and tasks</h2>
-
-<div class="screen-nav">
-  <button class="snav-btn active" onclick="jumpTo('s-login', this)">1. Login</button>
-  <button class="snav-btn" onclick="jumpTo('s-buildings', this)">2. Buildings</button>
-  <button class="snav-btn" onclick="jumpTo('s-rooms', this)">3. Rooms</button>
-  <button class="snav-btn" onclick="jumpTo('s-tasks', this)">4. Tasks</button>
-</div>
+<h2 class="sr-only">CleanTrack cleaning app with four screens: login, buildings, rooms, and tasks</h2>
 
 <div class="pa-shell">
   <div class="pa-overlay" id="submit-overlay">
-    <div class="pa-overlay-text" id="overlay-msg">Submitting...</div>
+    <div class="spinner"></div>
+    <div class="pa-overlay-text" id="overlay-msg">Loading...</div>
   </div>
 
+  <!-- SCREEN 1: LOGIN -->
   <div id="s-login" class="pa-screen active">
-    <div class="pa-header"><span class="pa-header-title">CleanTrack</span></div>
-    <div class="pa-body" style="display:flex; flex-direction:column; justify-content:center;">
-      <div style="font-size:13px; color:#444; margin-bottom:20px; text-align:center;">Sign in to start your shift</div>
-      <label class="pa-label" for="worker-select">Name</label>
+    <div class="pa-body" style="display:flex; flex-direction:column; justify-content:center; padding-top: 40px;">
+      <div class="login-logo">
+        <div class="login-logo-mark">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 14h4l3 6 4-12 3 6h2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="login-title">CleanTrack</div>
+        <div class="login-sub">Sign in to start your shift</div>
+      </div>
+      <label class="pa-label" for="worker-select">Your name</label>
       <select class="pa-dropdown" id="worker-select" onchange="clearErr()">
-        <option value="">-- Select your name --</option>
+        <option value="">Select your name...</option>
         <option value="Pastrana Hilda">Pastrana Hilda</option>
         <option value="Tania Vargas">Tania Vargas</option>
         <option value="Richard Masson">Richard Masson</option>
         <option value="Karina Alcca">Karina Alcca</option>
       </select>
       <label class="pa-label" for="pin-input">PIN</label>
-      <input class="pa-input" type="password" id="pin-input" placeholder="Enter your PIN" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
+      <input class="pa-input" type="password" id="pin-input" placeholder="••••" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
       <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
       <button class="pa-btn" onclick="tryLogin()">Start shift</button>
     </div>
   </div>
 
+  <!-- SCREEN 2: BUILDINGS -->
   <div id="s-buildings" class="pa-screen">
     <div class="pa-header">
       <button class="pa-back" onclick="nav('s-login')">&#8592; Back</button>
       <span class="pa-header-title">Buildings</span>
-      <span style="font-size:12px; color:#cce0f5;" id="header-worker">Hilda</span>
+      <span style="font-size:13px; color:rgba(255,255,255,0.7); font-weight:500;" id="header-worker">Hilda</span>
     </div>
     <div class="pa-body">
+      <div class="search-wrap">
+        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#9aa3b0" stroke-width="1.5"/><path d="M10 10l3 3" stroke="#9aa3b0" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <input class="pa-search" id="building-search" type="text" placeholder="Search buildings..." oninput="filterBuildings()" />
+      </div>
       <div class="pa-section-label">All buildings</div>
       <div id="building-gallery"></div>
+      <div class="search-empty" id="building-empty">No buildings match your search.</div>
     </div>
   </div>
 
+  <!-- SCREEN 3: ROOMS -->
   <div id="s-rooms" class="pa-screen">
     <div class="pa-header">
       <button class="pa-back" onclick="nav('s-buildings')">&#8592; Buildings</button>
-      <span class="pa-header-title" id="rooms-building-title">Maison Manuvie</span>
-      <span style="font-size:12px; color:#cce0f5;" id="rooms-progress-header">2/8</span>
+      <span class="pa-header-title" id="rooms-building-title">Robarts Library</span>
+      <span style="font-size:13px; color:rgba(255,255,255,0.7); font-weight:500;" id="rooms-progress-header">0/5</span>
     </div>
     <div class="pa-body">
+      <div class="search-wrap">
+        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#9aa3b0" stroke-width="1.5"/><path d="M10 10l3 3" stroke="#9aa3b0" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <input class="pa-search" id="room-search" type="text" placeholder="Search rooms..." oninput="filterRooms()" />
+      </div>
       <div class="pa-section-label">Rooms</div>
       <div id="room-gallery"></div>
+      <div class="search-empty" id="room-empty">No rooms match your search.</div>
     </div>
   </div>
 
+  <!-- SCREEN 4: TASKS -->
   <div id="s-tasks" class="pa-screen">
     <div class="pa-header">
       <button class="pa-back" onclick="nav('s-rooms')">&#8592; Rooms</button>
-      <span class="pa-header-title" id="task-room-title">Toilette Femme 15e</span>
+      <span class="pa-header-title" id="task-room-title">Washroom F1 North</span>
     </div>
     <div class="pa-body">
       <div class="pa-section-label">Cleaning tasks</div>
@@ -154,6 +498,32 @@ const ROOMS = {
 const TASKS = ['Wash & disinfect hand dryers','Clean & disinfect partitions','Clean counters, sinks & accessories','Clean or detach mirrors','Wash & disinfect toilets & urinals','Polish or clean stainless steel','Empty & disinfect waste bins'];
 
 let currentBuilding = 'B-58', currentRoom = null, taskStates = {};
+
+function filterBuildings() {
+  const q = document.getElementById('building-search').value.toLowerCase();
+  const items = document.querySelectorAll('#building-gallery .pa-gallery-item');
+  let visible = 0;
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    const show = text.includes(q);
+    item.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('building-empty').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function filterRooms() {
+  const q = document.getElementById('room-search').value.toLowerCase();
+  const items = document.querySelectorAll('#room-gallery .pa-gallery-item');
+  let visible = 0;
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    const show = text.includes(q);
+    item.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('room-empty').style.display = visible === 0 ? 'block' : 'none';
+}
 
 function renderBuildings() {
   document.getElementById('building-gallery').innerHTML = Object.entries(BUILDING_META).map(([id, meta]) => {
@@ -214,6 +584,8 @@ function openBuilding(id) {
       <div class="pa-gallery-title">${r.name}</div>
       <span class="pa-badge ${badgeClass[r.status]}">${badgeLabel[r.status]}</span>
     </div>`).join('');
+  document.getElementById('room-search').value = '';
+  document.getElementById('room-empty').style.display = 'none';
   nav('s-rooms');
 }
 
@@ -299,6 +671,8 @@ async function tryLogin() {
   overlay.classList.remove('active');
   document.getElementById('pin-input').value = '';
   document.getElementById('header-worker').textContent = name.split(' ')[0];
+  document.getElementById('building-search').value = '';
+  document.getElementById('building-empty').style.display = 'none';
   renderBuildings();
   nav('s-buildings');
 }
