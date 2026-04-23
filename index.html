@@ -199,19 +199,6 @@ function jumpTo(id, btn) {
   if (id === 's-buildings') renderBuildings();
 }
 
-function tryLogin() {
-  const name = document.getElementById('worker-select').value;
-  const pin = document.getElementById('pin-input').value;
-  const err = document.getElementById('login-error');
-  if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
-  if (PINS[name] !== pin) { err.textContent = 'Incorrect PIN. Please try again.'; err.style.display = 'block'; return; }
-  clearErr();
-  document.getElementById('pin-input').value = '';
-  document.getElementById('header-worker').textContent = name.split(' ')[0];
-  renderBuildings();
-  nav('s-buildings');
-}
-
 function clearErr() { document.getElementById('login-error').style.display = 'none'; }
 
 function openBuilding(id) {
@@ -260,6 +247,61 @@ function toggleTask(i) {
 }
 
 const FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
+const GET_FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/acb709b4fa794a0a856acde671ac017d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Em6TU2UK2re2W7SnDZIPun6_S9YfGUnJZ516JMXYBZs';
+
+async function tryLogin() {
+  const name = document.getElementById('worker-select').value;
+  const pin = document.getElementById('pin-input').value;
+  const err = document.getElementById('login-error');
+  if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
+  if (PINS[name] !== pin) { err.textContent = 'Incorrect PIN. Please try again.'; err.style.display = 'block'; return; }
+  clearErr();
+
+  const overlay = document.getElementById('submit-overlay');
+  const msg = document.getElementById('overlay-msg');
+  msg.className = 'pa-overlay-text';
+  msg.textContent = 'Loading...';
+  overlay.classList.add('active');
+
+  try {
+    const res = await fetch(GET_FLOW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ building: 'Robarts Library' })
+    });
+
+    if (res.ok || res.status === 202) {
+      const text = await res.text();
+      console.log('Raw response from Power Automate:', text);
+      let data;
+      try { data = JSON.parse(text); } catch(e) { console.log('Response is not JSON:', e); }
+      console.log('Parsed data:', data);
+      if (Array.isArray(data)) {
+        console.log('Number of rows returned:', data.length);
+        data.forEach(item => {
+          console.log('Row:', JSON.stringify(item));
+          const roomName = item.Room_x0020_Number || item['Room Number'] || item.RoomNumber;
+          const status = (item.Status || 'pending').toLowerCase();
+          console.log('Room:', roomName, '| Status:', status);
+          Object.values(ROOMS).forEach(roomList => {
+            const room = roomList.find(r => r.name === roomName);
+            if (room) room.status = status;
+          });
+        });
+      } else {
+        console.log('Data is not an array. Type:', typeof data, '| Value:', data);
+      }
+    }
+  } catch(e) {
+    console.log('Could not load statuses:', e);
+  }
+
+  overlay.classList.remove('active');
+  document.getElementById('pin-input').value = '';
+  document.getElementById('header-worker').textContent = name.split(' ')[0];
+  renderBuildings();
+  nav('s-buildings');
+}
 
 async function markStatus(status) {
   if (status === 'complete' && !taskStates[currentBuilding+currentRoom].every(Boolean)) return;
