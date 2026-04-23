@@ -279,9 +279,9 @@ async function tryLogin() {
       if (Array.isArray(data)) {
         console.log('Number of rows returned:', data.length);
         data.forEach(item => {
-          console.log('Row:', JSON.stringify(item));
-          const roomName = item.Room_x0020_Number || item['Room Number'] || item.RoomNumber;
-          const status = (item.Status || 'pending').toLowerCase();
+          const roomName = item.RoomNumber;
+          const statusRaw = item.Status && item.Status.Value ? item.Status.Value : 'Pending';
+          const status = statusRaw.toLowerCase();
           console.log('Room:', roomName, '| Status:', status);
           Object.values(ROOMS).forEach(roomList => {
             const room = roomList.find(r => r.name === roomName);
