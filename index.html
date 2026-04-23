@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanTrack — Power Apps Prototype</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #e5e5e5; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; min-height: 100vh; }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.screen-nav { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; justify-content: center; }
+.snav-btn { font-size: 11px; padding: 4px 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 2px; color: #444; font-family: 'Segoe UI', sans-serif; }
+.snav-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+.pa-shell { width: 390px; background: #f5f5f5; border: 1px solid #bbb; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.pa-screen { display: none; flex-direction: column; min-height: 680px; }
+.pa-screen.active { display: flex; }
+.pa-header { background: #1a3a5c; color: #fff; padding: 0 16px; height: 48px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.pa-header-title { font-size: 15px; font-weight: 600; }
+.pa-back { font-size: 13px; color: #cce0f5; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Segoe UI', sans-serif; }
+.pa-body { flex: 1; padding: 16px; background: #f5f5f5; overflow-y: auto; }
+.pa-label { font-size: 12px; color: #444; margin-bottom: 4px; margin-top: 14px; display: block; }
+.pa-label:first-child { margin-top: 0; }
+.pa-dropdown { width: 100%; height: 36px; border: 1px solid #8a8886; background: #fff; font-size: 14px; color: #111; padding: 0 30px 0 8px; border-radius: 2px; appearance: none; font-family: 'Segoe UI', sans-serif; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+.pa-dropdown:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
+.pa-input { width: 100%; height: 36px; border: 1px solid #8a8886; background: #fff; font-size: 14px; color: #111; padding: 0 8px; border-radius: 2px; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.15em; }
+.pa-input:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
+.pa-error { background: #fde7e9; border-left: 3px solid #c4262e; color: #6e0811; font-size: 12px; padding: 8px 10px; margin-top: 8px; display: none; }
+.pa-btn { width: 100%; height: 40px; background: #1a3a5c; color: #fff; border: none; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 2px; margin-top: 16px; font-family: 'Segoe UI', sans-serif; }
+.pa-btn:hover { background: #22507a; }
+.pa-section-label { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+.pa-section-label:first-child { margin-top: 0; }
+.pa-gallery-item { background: #fff; border: 1px solid #ddd; padding: 12px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.pa-gallery-item:hover { background: #f0f6ff; border-color: #1a3a5c; }
+.pa-gallery-title { font-size: 14px; font-weight: 600; color: #111; }
+.pa-gallery-sub { font-size: 12px; color: #666; margin-top: 2px; }
+.pa-badge { font-size: 11px; padding: 3px 8px; font-weight: 600; border-radius: 2px; white-space: nowrap; }
+.badge-done { background: #dff6dd; color: #107c10; border: 1px solid #107c10; }
+.badge-pending { background: #fff4ce; color: #7a5500; border: 1px solid #7a5500; }
+.badge-inprog { background: #cce0f5; color: #0c3a6e; border: 1px solid #0c3a6e; }
+.badge-policed { background: #f3e8ff; color: #5c2d91; border: 1px solid #5c2d91; }
+.pa-btn-secondary { width: 100%; height: 40px; background: #fff; color: #1a3a5c; border: 1px solid #1a3a5c; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 2px; margin-top: 8px; font-family: 'Segoe UI', sans-serif; }
+.pa-btn-secondary:hover { background: #f0f6ff; }
+.pa-checkbox-row { background: #fff; border: 1px solid #ddd; padding: 10px 12px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.pa-checkbox-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1a3a5c; flex-shrink: 0; cursor: pointer; }
+.pa-checkbox-row label { font-size: 13px; color: #111; cursor: pointer; flex: 1; }
+.pa-checkbox-row label.done { color: #888; text-decoration: line-through; }
+.pa-textarea { width: 100%; border: 1px solid #8a8886; background: #fff; font-size: 13px; color: #111; padding: 8px; border-radius: 2px; font-family: 'Segoe UI', sans-serif; resize: none; }
+.pa-textarea:focus { outline: 2px solid #1a3a5c; outline-offset: 0; }
+.pa-footer { padding: 12px 16px; background: #fff; border-top: 1px solid #ddd; flex-shrink: 0; }
+.pa-overlay { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.92); z-index:10; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+.pa-overlay.active { display:flex; }
+.pa-overlay-text { font-size:14px; color:#444; font-family:'Segoe UI',sans-serif; }
+.pa-overlay-success { font-size:14px; color:#107c10; font-weight:600; font-family:'Segoe UI',sans-serif; }
+.pa-overlay-error { font-size:14px; color:#c4262e; font-weight:600; font-family:'Segoe UI',sans-serif; }
+.pa-progress-bar { width: 100%; height: 8px; background: #ddd; margin-bottom: 4px; }
+.pa-progress-fill { height: 100%; background: #107c10; transition: width 0.2s; }
+.pa-progress-text { font-size: 12px; color: #444; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<h2 class="sr-only">CleanTrack Power Apps prototype with four screens: login, buildings, rooms, and tasks</h2>
+
+<div class="screen-nav">
+  <button class="snav-btn active" onclick="jumpTo('s-login', this)">1. Login</button>
+  <button class="snav-btn" onclick="jumpTo('s-buildings', this)">2. Buildings</button>
+  <button class="snav-btn" onclick="jumpTo('s-rooms', this)">3. Rooms</button>
+  <button class="snav-btn" onclick="jumpTo('s-tasks', this)">4. Tasks</button>
+</div>
+
+<div class="pa-shell">
+  <div class="pa-overlay" id="submit-overlay">
+    <div class="pa-overlay-text" id="overlay-msg">Submitting...</div>
+  </div>
+
+  <div id="s-login" class="pa-screen active">
+    <div class="pa-header"><span class="pa-header-title">CleanTrack</span></div>
+    <div class="pa-body" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-size:13px; color:#444; margin-bottom:20px; text-align:center;">Sign in to start your shift</div>
+      <label class="pa-label" for="worker-select">Name</label>
+      <select class="pa-dropdown" id="worker-select" onchange="clearErr()">
+        <option value="">-- Select your name --</option>
+        <option value="Pastrana Hilda">Pastrana Hilda</option>
+        <option value="Tania Vargas">Tania Vargas</option>
+        <option value="Richard Masson">Richard Masson</option>
+        <option value="Karina Alcca">Karina Alcca</option>
+      </select>
+      <label class="pa-label" for="pin-input">PIN</label>
+      <input class="pa-input" type="password" id="pin-input" placeholder="Enter your PIN" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
+      <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
+      <button class="pa-btn" onclick="tryLogin()">Start shift</button>
+    </div>
+  </div>
+
+  <div id="s-buildings" class="pa-screen">
+    <div class="pa-header">
+      <button class="pa-back" onclick="nav('s-login')">&#8592; Back</button>
+      <span class="pa-header-title">Buildings</span>
+      <span style="font-size:12px; color:#cce0f5;" id="header-worker">Hilda</span>
+    </div>
+    <div class="pa-body">
+      <div class="pa-section-label">All buildings</div>
+      <div id="building-gallery"></div>
+    </div>
+  </div>
+
+  <div id="s-rooms" class="pa-screen">
+    <div class="pa-header">
+      <button class="pa-back" onclick="nav('s-buildings')">&#8592; Buildings</button>
+      <span class="pa-header-title" id="rooms-building-title">Maison Manuvie</span>
+      <span style="font-size:12px; color:#cce0f5;" id="rooms-progress-header">2/8</span>
+    </div>
+    <div class="pa-body">
+      <div class="pa-section-label">Rooms</div>
+      <div id="room-gallery"></div>
+    </div>
+  </div>
+
+  <div id="s-tasks" class="pa-screen">
+    <div class="pa-header">
+      <button class="pa-back" onclick="nav('s-rooms')">&#8592; Rooms</button>
+      <span class="pa-header-title" id="task-room-title">Toilette Femme 15e</span>
+    </div>
+    <div class="pa-body">
+      <div class="pa-section-label">Cleaning tasks</div>
+      <div id="task-gallery"></div>
+      <div class="pa-section-label">Comment</div>
+      <textarea class="pa-textarea" rows="3" placeholder="Optional note..."></textarea>
+    </div>
+    <div class="pa-footer">
+      <div class="pa-progress-bar"><div class="pa-progress-fill" id="task-fill" style="width:0%"></div></div>
+      <div class="pa-progress-text" id="task-count-label">0 of 7 tasks complete</div>
+      <button class="pa-btn" id="done-btn" onclick="markStatus('complete')" style="margin-top:0; opacity:0.4; cursor:default;">Mark as complete</button>
+      <button class="pa-btn-secondary" onclick="markStatus('policed')">Mark as policed</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PINS = {'Pastrana Hilda':'1234','Tania Vargas':'2345','Richard Masson':'3456','Karina Alcca':'4567'};
+const BUILDING_META = {
+  'B-58':{name:'Robarts Library', addr:'130 St. George St'}
+};
+const BUILDINGS = Object.fromEntries(Object.entries(BUILDING_META).map(([k,v])=>[k,v.name]));
+const ROOMS = {
+  'B-58':[
+    {name:'Washroom F1 North', status:'pending'},
+    {name:'Washroom F1 South', status:'pending'},
+    {name:'Washroom F2 North', status:'pending'},
+    {name:'Washroom F2 South', status:'pending'},
+    {name:'Washroom F3 East',  status:'pending'}
+  ]
+};
+const TASKS = ['Wash & disinfect hand dryers','Clean & disinfect partitions','Clean counters, sinks & accessories','Clean or detach mirrors','Wash & disinfect toilets & urinals','Polish or clean stainless steel','Empty & disinfect waste bins'];
+
+let currentBuilding = 'B-58', currentRoom = null, taskStates = {};
+
+function renderBuildings() {
+  document.getElementById('building-gallery').innerHTML = Object.entries(BUILDING_META).map(([id, meta]) => {
+    const rooms = ROOMS[id] || [];
+    const complete = rooms.filter(r => r.status === 'complete').length;
+    const policed  = rooms.filter(r => r.status === 'policed').length;
+    const pending  = rooms.filter(r => r.status === 'pending').length;
+    const allDone  = complete === rooms.length && rooms.length > 0;
+    let badge;
+    if (allDone) {
+      badge = `<span class="pa-badge badge-done">All complete</span>`;
+    } else {
+      const parts = [];
+      if (complete > 0) parts.push(`${complete} complete`);
+      if (policed  > 0) parts.push(`${policed} policed`);
+      if (pending  > 0) parts.push(`${pending} pending`);
+      const cls = policed > 0 && pending === 0 ? 'badge-policed' : complete > 0 || policed > 0 ? 'badge-inprog' : 'badge-pending';
+      badge = `<span class="pa-badge ${cls}">${parts.join(' · ')}</span>`;
+    }
+    return `
+      <div class="pa-gallery-item" onclick="openBuilding('${id}')">
+        <div>
+          <div class="pa-gallery-title">${meta.name}</div>
+          <div class="pa-gallery-sub">${meta.addr}</div>
+        </div>
+        ${badge}
+      </div>`;
+  }).join('');
+}
+
+function nav(id) {
+  document.querySelectorAll('.pa-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const ids = ['s-login','s-buildings','s-rooms','s-tasks'];
+  document.querySelectorAll('.snav-btn').forEach((b,i) => b.classList.toggle('active', ids[i] === id));
+}
+
+function jumpTo(id, btn) {
+  document.querySelectorAll('.pa-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 's-buildings') renderBuildings();
+}
+
+function tryLogin() {
+  const name = document.getElementById('worker-select').value;
+  const pin = document.getElementById('pin-input').value;
+  const err = document.getElementById('login-error');
+  if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
+  if (PINS[name] !== pin) { err.textContent = 'Incorrect PIN. Please try again.'; err.style.display = 'block'; return; }
+  clearErr();
+  document.getElementById('pin-input').value = '';
+  document.getElementById('header-worker').textContent = name.split(' ')[0];
+  renderBuildings();
+  nav('s-buildings');
+}
+
+function clearErr() { document.getElementById('login-error').style.display = 'none'; }
+
+function openBuilding(id) {
+  currentBuilding = id;
+  document.getElementById('rooms-building-title').textContent = BUILDINGS[id];
+  const rooms = ROOMS[id];
+  const complete = rooms.filter(r => r.status === 'complete').length;
+  document.getElementById('rooms-progress-header').textContent = complete + '/' + rooms.length;
+  const badgeClass = { complete:'badge-done', policed:'badge-policed', pending:'badge-pending' };
+  const badgeLabel = { complete:'Complete', policed:'Policed', pending:'Pending' };
+  document.getElementById('room-gallery').innerHTML = rooms.map((r,i) => `
+    <div class="pa-gallery-item" onclick="openRoom(${i})">
+      <div class="pa-gallery-title">${r.name}</div>
+      <span class="pa-badge ${badgeClass[r.status]}">${badgeLabel[r.status]}</span>
+    </div>`).join('');
+  nav('s-rooms');
+}
+
+function openRoom(idx) {
+  currentRoom = idx;
+  if (!taskStates[currentBuilding+idx]) taskStates[currentBuilding+idx] = new Array(TASKS.length).fill(false);
+  document.getElementById('task-room-title').textContent = ROOMS[currentBuilding][idx].name;
+  renderTasks();
+  nav('s-tasks');
+}
+
+function renderTasks() {
+  const key = currentBuilding + currentRoom;
+  const states = taskStates[key];
+  document.getElementById('task-gallery').innerHTML = TASKS.map((t,i) => `
+    <div class="pa-checkbox-row">
+      <input type="checkbox" id="ck${i}" ${states[i] ? 'checked' : ''} onchange="toggleTask(${i})">
+      <label for="ck${i}" class="${states[i] ? 'done' : ''}">${t}</label>
+    </div>`).join('');
+  const done = states.filter(Boolean).length;
+  document.getElementById('task-fill').style.width = Math.round(done/TASKS.length*100) + '%';
+  document.getElementById('task-count-label').textContent = done + ' of ' + TASKS.length + ' tasks complete';
+  const btn = document.getElementById('done-btn');
+  btn.style.opacity = done === TASKS.length ? '1' : '0.4';
+  btn.style.cursor = done === TASKS.length ? 'pointer' : 'default';
+}
+
+function toggleTask(i) {
+  taskStates[currentBuilding+currentRoom][i] = !taskStates[currentBuilding+currentRoom][i];
+  renderTasks();
+}
+
+const FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
+
+async function markStatus(status) {
+  if (status === 'complete' && !taskStates[currentBuilding+currentRoom].every(Boolean)) return;
+
+  const room = ROOMS[currentBuilding][currentRoom];
+  const building = BUILDINGS[currentBuilding];
+  const worker = document.getElementById('worker-select').value;
+  const comment = document.querySelector('.pa-textarea').value;
+
+  const overlay = document.getElementById('submit-overlay');
+  const msg = document.getElementById('overlay-msg');
+  msg.className = 'pa-overlay-text';
+  msg.textContent = 'Submitting...';
+  overlay.classList.add('active');
+
+  try {
+    const res = await fetch(FLOW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ building, room: room.name, worker, status, comment })
+    });
+
+    if (res.ok || res.status === 202) {
+      msg.className = 'pa-overlay-success';
+      msg.textContent = 'Submitted successfully!';
+      room.status = status;
+      renderBuildings();
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        nav('s-rooms');
+        openBuilding(currentBuilding);
+      }, 1200);
+    } else {
+      throw new Error('Server error: ' + res.status);
+    }
+  } catch (err) {
+    msg.className = 'pa-overlay-error';
+    msg.textContent = 'Submission failed. Check your connection and try again.';
+    setTimeout(() => overlay.classList.remove('active'), 3000);
+  }
+}
+</script>
+</body>
+</html>
