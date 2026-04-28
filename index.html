@@ -4,390 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CleanTrack</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --blue: #1a3a5c;
-  --blue-mid: #2a5a8c;
-  --blue-light: #e8f1fa;
-  --green: #1a7a4a;
-  --green-light: #e6f5ee;
-  --amber: #7a5200;
-  --amber-light: #fef7e6;
-  --purple: #5b3a8c;
-  --purple-light: #f3eeff;
-  --red: #b91c1c;
-  --red-light: #fef2f2;
-  --gray-50: #f8f9fb;
-  --gray-100: #f0f2f5;
-  --gray-200: #e2e6ec;
-  --gray-400: #9aa3b0;
-  --gray-600: #5a6478;
-  --gray-900: #111827;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+  --blue: #1a3a5c; --blue-mid: #2a5a8c; --blue-light: #e8f1fa;
+  --green: #1a7a4a; --green-light: #e6f5ee;
+  --amber: #7a5200; --amber-light: #fef7e6;
+  --purple: #5b3a8c; --purple-light: #f3eeff;
+  --red: #b91c1c; --red-light: #fef2f2;
+  --gray-50: #f8f9fb; --gray-100: #f0f2f5; --gray-200: #e2e6ec;
+  --gray-400: #9aa3b0; --gray-600: #5a6478; --gray-900: #111827;
+  --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
 }
-
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
   background: #dde3ec;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem 1rem 3rem;
-  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 1.5rem 1rem 3rem; min-height: 100vh;
 }
-
 h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-/* Screen nav */
-/* App shell */
+/* Shell */
 .pa-shell {
-  width: 390px;
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
+  width: 390px; background: var(--gray-50);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; overflow: hidden; position: relative;
 }
-
 .pa-screen { display: none; flex-direction: column; min-height: 700px; }
 .pa-screen.active { display: flex; }
 
 /* Header */
 .pa-header {
-  background: var(--blue);
-  color: #fff;
-  padding: 0 20px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
+  background: var(--blue); color: #fff;
+  padding: 0 20px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
 }
-.pa-header-title {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
+.pa-header-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
 .pa-back {
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 6px 0;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: color 0.15s;
+  font-size: 13px; color: rgba(255,255,255,0.75); cursor: pointer;
+  background: none; border: none; padding: 6px 0;
+  font-family: 'DM Sans', sans-serif; font-weight: 500;
 }
 .pa-back:hover { color: #fff; }
 
 /* Body */
 .pa-body { flex: 1; padding: 20px; background: var(--gray-50); overflow-y: auto; }
 
-/* Login screen */
-.login-logo {
-  text-align: center;
-  margin: 8px 0 32px;
-}
+/* Login */
+.login-logo { text-align: center; margin: 8px 0 32px; }
 .login-logo-mark {
-  width: 56px;
-  height: 56px;
-  background: var(--blue);
-  border-radius: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(26,58,92,0.3);
+  width: 56px; height: 56px; background: var(--blue);
+  border-radius: 16px; display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 12px; box-shadow: 0 4px 16px rgba(26,58,92,0.3);
 }
 .login-title { font-size: 22px; font-weight: 600; color: var(--gray-900); letter-spacing: -0.02em; }
 .login-sub { font-size: 14px; color: var(--gray-400); margin-top: 4px; }
 
+/* Form elements */
 .pa-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 6px;
-  margin-top: 16px;
-  display: block;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+  margin-bottom: 6px; margin-top: 16px; display: block;
+  letter-spacing: 0.02em; text-transform: uppercase;
 }
 .pa-label:first-of-type { margin-top: 0; }
-
 .pa-dropdown {
-  width: 100%;
-  height: 48px;
-  border: 1.5px solid var(--gray-200);
-  background: #fff;
-  font-size: 15px;
-  color: var(--gray-900);
-  padding: 0 40px 0 14px;
-  border-radius: var(--radius-sm);
-  appearance: none;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
+  width: 100%; height: 48px; border: 1.5px solid var(--gray-200);
+  background: #fff; font-size: 15px; color: var(--gray-900);
+  padding: 0 40px 0 14px; border-radius: var(--radius-sm);
+  appearance: none; font-family: 'DM Sans', sans-serif;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa3b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  background-repeat: no-repeat; background-position: right 14px center;
   box-shadow: var(--shadow-sm);
 }
 .pa-dropdown:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
-
 .pa-input {
-  width: 100%;
-  height: 48px;
-  border: 1.5px solid var(--gray-200);
-  background: #fff;
-  font-size: 15px;
-  color: var(--gray-900);
-  padding: 0 14px;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  letter-spacing: 0.25em;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
+  width: 100%; height: 48px; border: 1.5px solid var(--gray-200);
+  background: #fff; font-size: 15px; color: var(--gray-900);
+  padding: 0 14px; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; letter-spacing: 0.25em; box-shadow: var(--shadow-sm);
 }
 .pa-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
-
 .pa-error {
-  background: var(--red-light);
-  border: 1px solid #fca5a5;
-  border-radius: var(--radius-sm);
-  color: var(--red);
-  font-size: 13px;
-  padding: 10px 14px;
-  margin-top: 10px;
-  display: none;
-  font-weight: 500;
+  background: var(--red-light); border: 1px solid #fca5a5;
+  border-radius: var(--radius-sm); color: var(--red);
+  font-size: 13px; padding: 10px 14px; margin-top: 10px; display: none; font-weight: 500;
 }
-
 .pa-btn {
-  width: 100%;
-  height: 48px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  margin-top: 20px;
+  width: 100%; height: 48px; background: var(--blue); color: #fff;
+  border: none; font-size: 15px; font-weight: 600; cursor: pointer;
+  border-radius: var(--radius-sm); margin-top: 20px;
   font-family: 'DM Sans', sans-serif;
-  letter-spacing: -0.01em;
-  transition: background 0.15s, transform 0.1s;
-  box-shadow: 0 2px 8px rgba(26,58,92,0.25);
+  box-shadow: 0 2px 8px rgba(26,58,92,0.25); transition: background 0.15s;
 }
 .pa-btn:hover { background: var(--blue-mid); }
-.pa-btn:active { transform: scale(0.99); }
+.pa-btn-secondary {
+  width: 100%; height: 48px; background: #fff; color: var(--blue);
+  border: 1.5px solid var(--blue); font-size: 15px; font-weight: 600;
+  cursor: pointer; border-radius: var(--radius-sm); margin-top: 10px;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+}
+.pa-btn-secondary:hover { background: var(--blue-light); }
 
 /* Section label */
 .pa-section-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--gray-400);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 20px 0 10px;
+  font-size: 11px; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.08em; margin: 20px 0 10px;
 }
 .pa-section-label:first-child { margin-top: 0; }
 
-/* Search bar */
-.search-wrap {
-  position: relative;
-  margin-bottom: 14px;
-}
+/* Search */
+.search-wrap { position: relative; margin-bottom: 14px; }
 .search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gray-400);
-  pointer-events: none;
-  display: flex;
-  align-items: center;
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); pointer-events: none; display: flex; align-items: center;
 }
 .pa-search {
-  width: 100%;
-  height: 42px;
-  border: 1.5px solid var(--gray-200);
-  background: #fff;
-  font-size: 14px;
-  color: var(--gray-900);
-  padding: 0 14px 0 38px;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
+  width: 100%; height: 42px; border: 1.5px solid var(--gray-200);
+  background: #fff; font-size: 14px; color: var(--gray-900);
+  padding: 0 14px 0 38px; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow-sm);
 }
 .pa-search:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.10); }
 .pa-search::placeholder { color: var(--gray-400); }
 .search-empty { text-align: center; padding: 32px 0; font-size: 14px; color: var(--gray-400); display: none; }
 
-/* Gallery items — buildings */
+/* Gallery */
 .pa-gallery-item {
-  background: #fff;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
-  box-shadow: var(--shadow-sm);
+  background: #fff; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 10px;
+  cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow-sm); transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
 }
-.pa-gallery-item:hover {
-  border-color: var(--blue);
-  box-shadow: 0 4px 12px rgba(26,58,92,0.12);
-  transform: translateY(-1px);
-}
-.pa-gallery-item:active { transform: scale(0.99); }
+.pa-gallery-item:hover { border-color: var(--blue); box-shadow: 0 4px 12px rgba(26,58,92,0.12); transform: translateY(-1px); }
 .pa-gallery-title { font-size: 15px; font-weight: 600; color: var(--gray-900); }
 .pa-gallery-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
 
 /* Badges */
-.pa-badge {
-  font-size: 11px;
-  padding: 4px 10px;
-  font-weight: 600;
-  border-radius: 20px;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-}
+.pa-badge { font-size: 11px; padding: 4px 10px; font-weight: 600; border-radius: 20px; white-space: nowrap; }
 .badge-done { background: var(--green-light); color: var(--green); }
 .badge-pending { background: var(--amber-light); color: var(--amber); }
 .badge-inprog { background: var(--blue-light); color: var(--blue); }
 .badge-policed { background: var(--purple-light); color: var(--purple); }
 
-/* Secondary button */
-.pa-btn-secondary {
-  width: 100%;
-  height: 48px;
-  background: #fff;
-  color: var(--blue);
-  border: 1.5px solid var(--blue);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  margin-top: 10px;
-  font-family: 'DM Sans', sans-serif;
-  transition: background 0.15s;
-}
-.pa-btn-secondary:hover { background: var(--blue-light); }
-
 /* Checkboxes */
 .pa-checkbox-row {
-  background: #fff;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: border-color 0.15s;
+  background: #fff; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 12px;
 }
-.pa-checkbox-row:has(input:checked) { border-color: var(--gray-200); background: var(--gray-50); }
-.pa-checkbox-row input[type=checkbox] {
-  width: 18px; height: 18px;
-  accent-color: var(--blue);
-  flex-shrink: 0;
-  cursor: pointer;
-}
+.pa-checkbox-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--blue); flex-shrink: 0; cursor: pointer; }
 .pa-checkbox-row label { font-size: 14px; color: var(--gray-900); cursor: pointer; flex: 1; line-height: 1.4; }
 .pa-checkbox-row label.done { color: var(--gray-400); text-decoration: line-through; }
 
-/* Comment box */
+/* Textarea */
 .pa-textarea {
-  width: 100%;
-  border: 1.5px solid var(--gray-200);
-  background: #fff;
-  font-size: 14px;
-  color: var(--gray-900);
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  resize: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
-  line-height: 1.5;
+  width: 100%; border: 1.5px solid var(--gray-200); background: #fff;
+  font-size: 14px; color: var(--gray-900); padding: 12px 14px;
+  border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif;
+  resize: none; box-shadow: var(--shadow-sm);
 }
 .pa-textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
 
 /* Footer */
-.pa-footer {
-  padding: 16px 20px;
-  background: #fff;
-  border-top: 1px solid var(--gray-200);
-  flex-shrink: 0;
-}
-
-/* Progress bar */
-.pa-progress-bar {
-  width: 100%;
-  height: 6px;
-  background: var(--gray-200);
-  border-radius: 99px;
-  margin-bottom: 6px;
-  overflow: hidden;
-}
-.pa-progress-fill {
-  height: 100%;
-  background: var(--blue);
-  border-radius: 99px;
-  transition: width 0.3s ease;
-}
+.pa-footer { padding: 16px 20px; background: #fff; border-top: 1px solid var(--gray-200); flex-shrink: 0; }
+.pa-progress-bar { width: 100%; height: 6px; background: var(--gray-200); border-radius: 99px; margin-bottom: 6px; overflow: hidden; }
+.pa-progress-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width 0.3s ease; }
 .pa-progress-text { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; font-weight: 500; }
 
 /* Overlay */
 .pa-overlay {
-  display: none;
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(255,255,255,0.94);
-  z-index: 10;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  backdrop-filter: blur(4px);
+  display: none; position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(255,255,255,0.94);
+  z-index: 10; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
 }
 .pa-overlay.active { display: flex; }
 .pa-overlay-text { font-size: 15px; color: var(--gray-600); font-family: 'DM Sans', sans-serif; font-weight: 500; }
 .pa-overlay-success { font-size: 15px; color: var(--green); font-weight: 600; font-family: 'DM Sans', sans-serif; }
 .pa-overlay-error { font-size: 15px; color: var(--red); font-weight: 600; font-family: 'DM Sans', sans-serif; }
-
-/* Spinner */
 .spinner {
-  width: 28px; height: 28px;
-  border: 3px solid var(--gray-200);
-  border-top-color: var(--blue);
-  border-radius: 50%;
+  width: 28px; height: 28px; border: 3px solid var(--gray-200);
+  border-top-color: var(--blue); border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Dashboard */
+.dash-header { background: var(--blue); padding: 20px 20px 24px; color: #fff; flex-shrink: 0; }
+.dash-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.dash-logo-mark {
+  width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+}
+.dash-logo-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.dash-search-row { display: flex; gap: 8px; }
+.dash-search-input {
+  flex: 1; height: 42px; border: none; border-radius: var(--radius-sm);
+  padding: 0 14px; font-size: 14px; font-family: 'DM Sans', sans-serif;
+  background: rgba(255,255,255,0.15); color: #fff; outline: none;
+}
+.dash-search-input::placeholder { color: rgba(255,255,255,0.55); }
+.dash-search-input:focus { background: rgba(255,255,255,0.22); }
+.dash-search-btn {
+  height: 42px; padding: 0 16px; background: #fff; color: var(--blue);
+  border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+}
+.dash-body { flex: 1; overflow-y: auto; background: var(--gray-50); }
+.dash-result { padding: 16px 20px; }
+.dash-room-name { font-size: 17px; font-weight: 600; color: var(--gray-900); margin-bottom: 2px; }
+.dash-room-meta { font-size: 12px; color: var(--gray-400); margin-bottom: 14px; }
+.dash-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.dash-stat {
+  background: #fff; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); padding: 12px 14px; box-shadow: var(--shadow-sm);
+}
+.dash-stat-label { font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.dash-stat-value { font-size: 20px; font-weight: 600; color: var(--gray-900); }
+.dash-stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.dash-history-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.dash-history-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+}
+.dash-history-row:last-child { border-bottom: none; }
+.dash-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--blue-light); color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; flex-shrink: 0;
+}
+.dash-history-info { flex: 1; min-width: 0; }
+.dash-history-name { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+.dash-history-time { font-size: 12px; color: var(--gray-400); }
+.dash-history-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+.dash-empty { text-align: center; padding: 48px 20px; }
+.dash-empty-icon { font-size: 32px; margin-bottom: 8px; }
+.dash-empty-title { font-size: 15px; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
+.dash-empty-sub { font-size: 14px; color: var(--gray-400); }
+.dash-login-bar { padding: 16px 20px; background: #fff; border-top: 1px solid var(--gray-200); flex-shrink: 0; }
+.dash-login-btn {
+  width: 100%; height: 48px; background: var(--blue); color: #fff;
+  border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 2px 8px rgba(26,58,92,0.25); transition: background 0.15s;
+}
+.dash-login-btn:hover { background: var(--blue-mid); }
 </style>
 </head>
 <body>
-<h2 class="sr-only">CleanTrack cleaning app with four screens: login, buildings, rooms, and tasks</h2>
+<h2 class="sr-only">CleanTrack app</h2>
 
 <div class="pa-shell">
   <div class="pa-overlay" id="submit-overlay">
@@ -395,12 +264,46 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
     <div class="pa-overlay-text" id="overlay-msg">Loading...</div>
   </div>
 
+  <!-- SCREEN 0: PUBLIC DASHBOARD -->
+  <div id="s-dashboard" class="pa-screen active">
+    <div class="dash-header">
+      <div class="dash-logo">
+        <div class="dash-logo-mark">
+          <svg width="20" height="20" viewBox="0 0 28 28" fill="none"><path d="M6 14h4l3 6 4-12 3 6h2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="dash-logo-title">CleanTrack</span>
+      </div>
+      <div class="dash-search-row">
+        <input class="dash-search-input" id="dash-search-input" type="text" placeholder="Search by room name..." />
+        <button class="dash-search-btn" onclick="dashSearch()">Search</button>
+      </div>
+    </div>
+    <div class="dash-body" id="dash-body">
+      <div class="dash-empty">
+        <div class="dash-empty-icon">🔍</div>
+        <div class="dash-empty-title">Search for a room</div>
+        <div class="dash-empty-sub">Enter a room name to see its cleaning status and history.</div>
+      </div>
+    </div>
+    <div class="dash-login-bar">
+      <button class="dash-login-btn" onclick="nav('s-login')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 8H2m0 0 3-3M2 8l3 3M9 5V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Log in as employee
+      </button>
+    </div>
+  </div>
+
   <!-- SCREEN 1: LOGIN -->
-  <div id="s-login" class="pa-screen active">
-    <div class="pa-body" style="display:flex; flex-direction:column; justify-content:center; padding-top: 40px;">
+  <div id="s-login" class="pa-screen">
+    <div class="pa-header">
+      <button class="pa-back" onclick="nav('s-dashboard')">&#8592; Back</button>
+      <span class="pa-header-title">Employee Login</span>
+      <span style="width:48px;"></span>
+    </div>
+    <div class="pa-body" style="display:flex; flex-direction:column; justify-content:center; padding-top:20px;">
       <div class="login-logo">
         <div class="login-logo-mark">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <path d="M6 14h4l3 6 4-12 3 6h2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
@@ -481,109 +384,223 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
 </div>
 
 <script>
-const PINS = {'Pastrana Hilda':'1234','Tania Vargas':'2345','Richard Masson':'3456','Karina Alcca':'4567'};
-const BUILDING_META = {
-  'B-58':{name:'Robarts Library', addr:'130 St. George St'}
+// ─── Data ────────────────────────────────────────────────────────────────────
+const PINS = {
+  'Pastrana Hilda': '1234',
+  'Tania Vargas':   '2345',
+  'Richard Masson': '3456',
+  'Karina Alcca':   '4567'
 };
-const BUILDINGS = Object.fromEntries(Object.entries(BUILDING_META).map(([k,v])=>[k,v.name]));
+
+const BUILDING_META = {
+  'B-58': { name: 'Robarts Library', addr: '130 St. George St' }
+};
+
+const BUILDINGS = Object.fromEntries(Object.entries(BUILDING_META).map(([k,v]) => [k, v.name]));
+
 const ROOMS = {
-  'B-58':[
-    {name:'Washroom F1 North', status:'pending'},
-    {name:'Washroom F1 South', status:'pending'},
-    {name:'Washroom F2 North', status:'pending'},
-    {name:'Washroom F2 South', status:'pending'},
-    {name:'Washroom F3 East',  status:'pending'}
+  'B-58': [
+    { name: 'Washroom F1 North', status: 'pending' },
+    { name: 'Washroom F1 South', status: 'pending' },
+    { name: 'Washroom F2 North', status: 'pending' },
+    { name: 'Washroom F2 South', status: 'pending' },
+    { name: 'Washroom F3 East',  status: 'pending' }
   ]
 };
-const TASKS = ['Wash & disinfect hand dryers','Clean & disinfect partitions','Clean counters, sinks & accessories','Clean or detach mirrors','Wash & disinfect toilets & urinals','Polish or clean stainless steel','Empty & disinfect waste bins'];
+
+const TASKS = [
+  'Wash & disinfect hand dryers',
+  'Clean & disinfect partitions',
+  'Clean counters, sinks & accessories',
+  'Clean or detach mirrors',
+  'Wash & disinfect toilets & urinals',
+  'Polish or clean stainless steel',
+  'Empty & disinfect waste bins'
+];
+
+const MOCK_HISTORY = {
+  'Washroom F1 North': {
+    building: 'Robarts Library', floor: 'Floor 1',
+    history: [
+      { worker: 'Pastrana Hilda', initials: 'PH', date: 'Apr 28, 2026', time: '09:12 AM', status: 'complete' },
+      { worker: 'Tania Vargas',   initials: 'TV', date: 'Apr 27, 2026', time: '08:50 AM', status: 'complete' },
+      { worker: 'Richard Masson', initials: 'RM', date: 'Apr 26, 2026', time: '09:30 AM', status: 'policed'  },
+      { worker: 'Pastrana Hilda', initials: 'PH', date: 'Apr 25, 2026', time: '08:45 AM', status: 'complete' }
+    ]
+  },
+  'Washroom F1 South': {
+    building: 'Robarts Library', floor: 'Floor 1',
+    history: [
+      { worker: 'Karina Alcca',   initials: 'KA', date: 'Apr 28, 2026', time: '09:25 AM', status: 'complete' },
+      { worker: 'Tania Vargas',   initials: 'TV', date: 'Apr 27, 2026', time: '09:10 AM', status: 'complete' },
+      { worker: 'Karina Alcca',   initials: 'KA', date: 'Apr 26, 2026', time: '09:00 AM', status: 'complete' }
+    ]
+  },
+  'Washroom F2 North': {
+    building: 'Robarts Library', floor: 'Floor 2',
+    history: [
+      { worker: 'Richard Masson', initials: 'RM', date: 'Apr 28, 2026', time: '10:05 AM', status: 'pending'  },
+      { worker: 'Tania Vargas',   initials: 'TV', date: 'Apr 27, 2026', time: '09:50 AM', status: 'complete' }
+    ]
+  },
+  'Washroom F2 South': {
+    building: 'Robarts Library', floor: 'Floor 2',
+    history: [
+      { worker: 'Pastrana Hilda', initials: 'PH', date: 'Apr 27, 2026', time: '10:20 AM', status: 'complete' },
+      { worker: 'Richard Masson', initials: 'RM', date: 'Apr 26, 2026', time: '10:00 AM', status: 'policed'  }
+    ]
+  },
+  'Washroom F3 East': {
+    building: 'Robarts Library', floor: 'Floor 3',
+    history: [
+      { worker: 'Karina Alcca',   initials: 'KA', date: 'Apr 28, 2026', time: '11:00 AM', status: 'complete' },
+      { worker: 'Pastrana Hilda', initials: 'PH', date: 'Apr 27, 2026', time: '10:45 AM', status: 'complete' },
+      { worker: 'Tania Vargas',   initials: 'TV', date: 'Apr 26, 2026', time: '11:15 AM', status: 'complete' }
+    ]
+  }
+};
 
 let currentBuilding = 'B-58', currentRoom = null, taskStates = {};
 
+const STATUS_COLORS = {
+  complete: 'background:#e6f5ee;color:#1a7a4a',
+  policed:  'background:#f3eeff;color:#5b3a8c',
+  pending:  'background:#fef7e6;color:#7a5200'
+};
+const STATUS_LABELS = { complete: 'Complete', policed: 'Policed', pending: 'Pending' };
+
+// ─── Navigation ──────────────────────────────────────────────────────────────
+function nav(id) {
+  document.querySelectorAll('.pa-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
+function dashSearch() {
+  const q = document.getElementById('dash-search-input').value.trim().toLowerCase();
+  const body = document.getElementById('dash-body');
+  if (!q) {
+    body.innerHTML = '<div class="dash-empty"><div class="dash-empty-icon">🔍</div><div class="dash-empty-title">Search for a room</div><div class="dash-empty-sub">Enter a room name to see its cleaning status and history.</div></div>';
+    return;
+  }
+  const match = Object.entries(MOCK_HISTORY).find(function(entry) {
+    return entry[0].toLowerCase().includes(q);
+  });
+  if (!match) {
+    body.innerHTML = '<div class="dash-empty"><div class="dash-empty-icon">🚫</div><div class="dash-empty-title">Room not found</div><div class="dash-empty-sub">Try a different room name.</div></div>';
+    return;
+  }
+  const roomName = match[0];
+  const data = match[1];
+  const last = data.history[0];
+
+  var historyRows = data.history.map(function(h) {
+    return '<div class="dash-history-row">' +
+      '<div class="dash-avatar">' + h.initials + '</div>' +
+      '<div class="dash-history-info">' +
+        '<div class="dash-history-name">' + h.worker + '</div>' +
+        '<div class="dash-history-time">' + h.date + ' \u00b7 ' + h.time + '</div>' +
+      '</div>' +
+      '<span class="dash-history-badge" style="' + STATUS_COLORS[h.status] + '">' + STATUS_LABELS[h.status] + '</span>' +
+    '</div>';
+  }).join('');
+
+  body.innerHTML =
+    '<div class="dash-result">' +
+      '<div class="dash-room-name">' + roomName + '</div>' +
+      '<div class="dash-room-meta">' + data.building + ' \u00b7 ' + data.floor + '</div>' +
+      '<div class="dash-stat-row">' +
+        '<div class="dash-stat">' +
+          '<div class="dash-stat-label">Last cleaned</div>' +
+          '<div class="dash-stat-value" style="font-size:14px;line-height:1.3;">' + last.date + '</div>' +
+          '<div class="dash-stat-sub">' + last.time + ' by ' + last.worker.split(' ')[0] + '</div>' +
+        '</div>' +
+        '<div class="dash-stat">' +
+          '<div class="dash-stat-label">Current status</div>' +
+          '<div style="margin-top:6px;"><span class="dash-history-badge" style="' + STATUS_COLORS[last.status] + '">' + STATUS_LABELS[last.status] + '</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dash-history-label">Cleaning history</div>' +
+      historyRows +
+    '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('dash-search-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') dashSearch();
+  });
+});
+
+// ─── Login ───────────────────────────────────────────────────────────────────
+function clearErr() { document.getElementById('login-error').style.display = 'none'; }
+
+// ─── Buildings ───────────────────────────────────────────────────────────────
 function filterBuildings() {
   const q = document.getElementById('building-search').value.toLowerCase();
   const items = document.querySelectorAll('#building-gallery .pa-gallery-item');
   let visible = 0;
-  items.forEach(item => {
-    const text = item.textContent.toLowerCase();
-    const show = text.includes(q);
+  items.forEach(function(item) {
+    const show = item.textContent.toLowerCase().includes(q);
     item.style.display = show ? '' : 'none';
     if (show) visible++;
   });
   document.getElementById('building-empty').style.display = visible === 0 ? 'block' : 'none';
 }
 
+function renderBuildings() {
+  document.getElementById('building-gallery').innerHTML = Object.entries(BUILDING_META).map(function(entry) {
+    const id = entry[0];
+    const meta = entry[1];
+    const rooms = ROOMS[id] || [];
+    const complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
+    const policed  = rooms.filter(function(r) { return r.status === 'policed';  }).length;
+    const pending  = rooms.filter(function(r) { return r.status === 'pending';  }).length;
+    const allDone  = complete === rooms.length && rooms.length > 0;
+    var badge;
+    if (allDone) {
+      badge = '<span class="pa-badge badge-done">All complete</span>';
+    } else {
+      const parts = [];
+      if (complete > 0) parts.push(complete + ' complete');
+      if (policed  > 0) parts.push(policed  + ' policed');
+      if (pending  > 0) parts.push(pending  + ' pending');
+      const cls = policed > 0 && pending === 0 ? 'badge-policed' : complete > 0 || policed > 0 ? 'badge-inprog' : 'badge-pending';
+      badge = '<span class="pa-badge ' + cls + '">' + parts.join(' \u00b7 ') + '</span>';
+    }
+    return '<div class="pa-gallery-item" onclick="openBuilding(\'' + id + '\')">' +
+      '<div><div class="pa-gallery-title">' + meta.name + '</div>' +
+      '<div class="pa-gallery-sub">' + meta.addr + '</div></div>' +
+      badge + '</div>';
+  }).join('');
+}
+
+// ─── Rooms ───────────────────────────────────────────────────────────────────
 function filterRooms() {
   const q = document.getElementById('room-search').value.toLowerCase();
   const items = document.querySelectorAll('#room-gallery .pa-gallery-item');
   let visible = 0;
-  items.forEach(item => {
-    const text = item.textContent.toLowerCase();
-    const show = text.includes(q);
+  items.forEach(function(item) {
+    const show = item.textContent.toLowerCase().includes(q);
     item.style.display = show ? '' : 'none';
     if (show) visible++;
   });
   document.getElementById('room-empty').style.display = visible === 0 ? 'block' : 'none';
 }
 
-function renderBuildings() {
-  document.getElementById('building-gallery').innerHTML = Object.entries(BUILDING_META).map(([id, meta]) => {
-    const rooms = ROOMS[id] || [];
-    const complete = rooms.filter(r => r.status === 'complete').length;
-    const policed  = rooms.filter(r => r.status === 'policed').length;
-    const pending  = rooms.filter(r => r.status === 'pending').length;
-    const allDone  = complete === rooms.length && rooms.length > 0;
-    let badge;
-    if (allDone) {
-      badge = `<span class="pa-badge badge-done">All complete</span>`;
-    } else {
-      const parts = [];
-      if (complete > 0) parts.push(`${complete} complete`);
-      if (policed  > 0) parts.push(`${policed} policed`);
-      if (pending  > 0) parts.push(`${pending} pending`);
-      const cls = policed > 0 && pending === 0 ? 'badge-policed' : complete > 0 || policed > 0 ? 'badge-inprog' : 'badge-pending';
-      badge = `<span class="pa-badge ${cls}">${parts.join(' · ')}</span>`;
-    }
-    return `
-      <div class="pa-gallery-item" onclick="openBuilding('${id}')">
-        <div>
-          <div class="pa-gallery-title">${meta.name}</div>
-          <div class="pa-gallery-sub">${meta.addr}</div>
-        </div>
-        ${badge}
-      </div>`;
-  }).join('');
-}
-
-function nav(id) {
-  document.querySelectorAll('.pa-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const ids = ['s-login','s-buildings','s-rooms','s-tasks'];
-  document.querySelectorAll('.snav-btn').forEach((b,i) => b.classList.toggle('active', ids[i] === id));
-}
-
-function jumpTo(id, btn) {
-  document.querySelectorAll('.pa-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (id === 's-buildings') renderBuildings();
-}
-
-function clearErr() { document.getElementById('login-error').style.display = 'none'; }
-
 function openBuilding(id) {
   currentBuilding = id;
   document.getElementById('rooms-building-title').textContent = BUILDINGS[id];
   const rooms = ROOMS[id];
-  const complete = rooms.filter(r => r.status === 'complete').length;
+  const complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
   document.getElementById('rooms-progress-header').textContent = complete + '/' + rooms.length;
-  const badgeClass = { complete:'badge-done', policed:'badge-policed', pending:'badge-pending' };
-  const badgeLabel = { complete:'Complete', policed:'Policed', pending:'Pending' };
-  document.getElementById('room-gallery').innerHTML = rooms.map((r,i) => `
-    <div class="pa-gallery-item" onclick="openRoom(${i})">
-      <div class="pa-gallery-title">${r.name}</div>
-      <span class="pa-badge ${badgeClass[r.status]}">${badgeLabel[r.status]}</span>
-    </div>`).join('');
+  const badgeClass = { complete: 'badge-done', policed: 'badge-policed', pending: 'badge-pending' };
+  const badgeLabel = { complete: 'Complete', policed: 'Policed', pending: 'Pending' };
+  document.getElementById('room-gallery').innerHTML = rooms.map(function(r, i) {
+    return '<div class="pa-gallery-item" onclick="openRoom(' + i + ')">' +
+      '<div class="pa-gallery-title">' + r.name + '</div>' +
+      '<span class="pa-badge ' + badgeClass[r.status] + '">' + badgeLabel[r.status] + '</span>' +
+    '</div>';
+  }).join('');
   document.getElementById('room-search').value = '';
   document.getElementById('room-empty').style.display = 'none';
   nav('s-rooms');
@@ -591,47 +608,50 @@ function openBuilding(id) {
 
 function openRoom(idx) {
   currentRoom = idx;
-  if (!taskStates[currentBuilding+idx]) taskStates[currentBuilding+idx] = new Array(TASKS.length).fill(false);
+  if (!taskStates[currentBuilding + idx]) taskStates[currentBuilding + idx] = new Array(TASKS.length).fill(false);
   document.getElementById('task-room-title').textContent = ROOMS[currentBuilding][idx].name;
   renderTasks();
   nav('s-tasks');
 }
 
+// ─── Tasks ───────────────────────────────────────────────────────────────────
 function renderTasks() {
   const key = currentBuilding + currentRoom;
   const states = taskStates[key];
-  document.getElementById('task-gallery').innerHTML = TASKS.map((t,i) => `
-    <div class="pa-checkbox-row">
-      <input type="checkbox" id="ck${i}" ${states[i] ? 'checked' : ''} onchange="toggleTask(${i})">
-      <label for="ck${i}" class="${states[i] ? 'done' : ''}">${t}</label>
-    </div>`).join('');
+  document.getElementById('task-gallery').innerHTML = TASKS.map(function(t, i) {
+    return '<div class="pa-checkbox-row">' +
+      '<input type="checkbox" id="ck' + i + '" ' + (states[i] ? 'checked' : '') + ' onchange="toggleTask(' + i + ')">' +
+      '<label for="ck' + i + '" class="' + (states[i] ? 'done' : '') + '">' + t + '</label>' +
+    '</div>';
+  }).join('');
   const done = states.filter(Boolean).length;
-  document.getElementById('task-fill').style.width = Math.round(done/TASKS.length*100) + '%';
+  document.getElementById('task-fill').style.width = Math.round(done / TASKS.length * 100) + '%';
   document.getElementById('task-count-label').textContent = done + ' of ' + TASKS.length + ' tasks complete';
   const btn = document.getElementById('done-btn');
   btn.style.opacity = done === TASKS.length ? '1' : '0.4';
-  btn.style.cursor = done === TASKS.length ? 'pointer' : 'default';
+  btn.style.cursor  = done === TASKS.length ? 'pointer' : 'default';
 }
 
 function toggleTask(i) {
-  taskStates[currentBuilding+currentRoom][i] = !taskStates[currentBuilding+currentRoom][i];
+  taskStates[currentBuilding + currentRoom][i] = !taskStates[currentBuilding + currentRoom][i];
   renderTasks();
 }
 
-const FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
+// ─── Power Automate ───────────────────────────────────────────────────────────
+const FLOW_URL     = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
 const GET_FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/acb709b4fa794a0a856acde671ac017d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Em6TU2UK2re2W7SnDZIPun6_S9YfGUnJZ516JMXYBZs';
 
 async function tryLogin() {
   const name = document.getElementById('worker-select').value;
-  const pin = document.getElementById('pin-input').value;
-  const err = document.getElementById('login-error');
+  const pin  = document.getElementById('pin-input').value;
+  const err  = document.getElementById('login-error');
   if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
   if (PINS[name] !== pin) { err.textContent = 'Incorrect PIN. Please try again.'; err.style.display = 'block'; return; }
   clearErr();
 
   const overlay = document.getElementById('submit-overlay');
-  const msg = document.getElementById('overlay-msg');
-  msg.className = 'pa-overlay-text';
+  const msg     = document.getElementById('overlay-msg');
+  msg.className   = 'pa-overlay-text';
   msg.textContent = 'Loading...';
   overlay.classList.add('active');
 
@@ -641,32 +661,23 @@ async function tryLogin() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ building: 'Robarts Library' })
     });
-
     if (res.ok || res.status === 202) {
       const text = await res.text();
-      console.log('Raw response from Power Automate:', text);
       let data;
-      try { data = JSON.parse(text); } catch(e) { console.log('Response is not JSON:', e); }
-      console.log('Parsed data:', data);
+      try { data = JSON.parse(text); } catch(e) { console.log('Not JSON:', e); }
       if (Array.isArray(data)) {
-        console.log('Number of rows returned:', data.length);
-        data.forEach(item => {
-          const roomName = item.RoomNumber;
+        data.forEach(function(item) {
+          const roomName  = item.RoomNumber;
           const statusRaw = item.Status && item.Status.Value ? item.Status.Value : 'Pending';
-          const status = statusRaw.toLowerCase();
-          console.log('Room:', roomName, '| Status:', status);
-          Object.values(ROOMS).forEach(roomList => {
-            const room = roomList.find(r => r.name === roomName);
+          const status    = statusRaw.toLowerCase();
+          Object.values(ROOMS).forEach(function(roomList) {
+            const room = roomList.find(function(r) { return r.name === roomName; });
             if (room) room.status = status;
           });
         });
-      } else {
-        console.log('Data is not an array. Type:', typeof data, '| Value:', data);
       }
     }
-  } catch(e) {
-    console.log('Could not load statuses:', e);
-  }
+  } catch(e) { console.log('Could not load statuses:', e); }
 
   overlay.classList.remove('active');
   document.getElementById('pin-input').value = '';
@@ -678,16 +689,16 @@ async function tryLogin() {
 }
 
 async function markStatus(status) {
-  if (status === 'complete' && !taskStates[currentBuilding+currentRoom].every(Boolean)) return;
+  if (status === 'complete' && !taskStates[currentBuilding + currentRoom].every(Boolean)) return;
 
-  const room = ROOMS[currentBuilding][currentRoom];
+  const room    = ROOMS[currentBuilding][currentRoom];
   const building = BUILDINGS[currentBuilding];
-  const worker = document.getElementById('worker-select').value;
+  const worker  = document.getElementById('worker-select').value;
   const comment = document.querySelector('.pa-textarea').value;
 
   const overlay = document.getElementById('submit-overlay');
-  const msg = document.getElementById('overlay-msg');
-  msg.className = 'pa-overlay-text';
+  const msg     = document.getElementById('overlay-msg');
+  msg.className   = 'pa-overlay-text';
   msg.textContent = 'Submitting...';
   overlay.classList.add('active');
 
@@ -695,15 +706,14 @@ async function markStatus(status) {
     const res = await fetch(FLOW_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ building, room: room.name, worker, status, comment })
+      body: JSON.stringify({ building: building, room: room.name, worker: worker, status: status, comment: comment })
     });
-
     if (res.ok || res.status === 202) {
-      msg.className = 'pa-overlay-success';
+      msg.className   = 'pa-overlay-success';
       msg.textContent = 'Submitted successfully!';
       room.status = status;
       renderBuildings();
-      setTimeout(() => {
+      setTimeout(function() {
         overlay.classList.remove('active');
         nav('s-rooms');
         openBuilding(currentBuilding);
@@ -711,10 +721,10 @@ async function markStatus(status) {
     } else {
       throw new Error('Server error: ' + res.status);
     }
-  } catch (err) {
-    msg.className = 'pa-overlay-error';
+  } catch(err) {
+    msg.className   = 'pa-overlay-error';
     msg.textContent = 'Submission failed. Check your connection and try again.';
-    setTimeout(() => overlay.classList.remove('active'), 3000);
+    setTimeout(function() { overlay.classList.remove('active'); }, 3000);
   }
 }
 </script>
