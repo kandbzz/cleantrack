@@ -260,6 +260,33 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
   box-shadow: 0 2px 8px rgba(26,58,92,0.25); transition: background 0.15s;
 }
 .dash-login-btn:hover { background: var(--blue-mid); }
+.autocomplete-wrap { position: relative; }
+.autocomplete-input {
+  width: 100%; height: 48px; border: 1.5px solid var(--gray-200);
+  background: #fff; font-size: 15px; color: var(--gray-900);
+  padding: 0 14px; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow-sm);
+  letter-spacing: normal;
+}
+.autocomplete-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
+.autocomplete-list {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: #fff; border: 1.5px solid var(--blue);
+  border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  max-height: 200px; overflow-y: auto;
+  z-index: 100; display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.autocomplete-list.open { display: block; }
+.autocomplete-item {
+  padding: 11px 14px; font-size: 14px; color: var(--gray-900);
+  cursor: pointer; border-bottom: 1px solid var(--gray-100);
+  font-family: 'DM Sans', sans-serif;
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover { background: var(--blue-light); color: var(--blue); }
+.autocomplete-item mark { background: none; color: var(--blue); font-weight: 600; }
+.autocomplete-empty { padding: 11px 14px; font-size: 14px; color: var(--gray-400); font-family: 'DM Sans', sans-serif; }
 </style>
 </head>
 <body>
@@ -317,10 +344,12 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
         <div class="login-title">CleanTrack</div>
         <div class="login-sub">Sign in to start your shift</div>
       </div>
-      <label class="pa-label" for="worker-select">Your name</label>
-      <select class="pa-dropdown" id="worker-select" onchange="clearErr()">
-        <option value="">Loading names...</option>
-      </select>
+      <label class="pa-label" for="worker-input">Your name</label>
+      <div class="autocomplete-wrap">
+        <input class="autocomplete-input" type="text" id="worker-input" placeholder="Type to search your name..." autocomplete="off" oninput="filterWorkers()" onfocus="filterWorkers()" onchange="clearErr()" />
+        <input type="hidden" id="worker-select" />
+        <div class="autocomplete-list" id="worker-list"></div>
+      </div>
       <label class="pa-label" for="pin-input">PIN</label>
       <input class="pa-input" type="password" id="pin-input" placeholder="••••" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
       <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
@@ -490,8 +519,9 @@ document.addEventListener('DOMContentLoaded', function() {
   loadWorkers();
 });
 
+var allWorkerNames = [];
+
 async function loadWorkers() {
-  var select = document.getElementById('worker-select');
   try {
     var res = await fetch(GET_WORKERS_URL, {
       method: 'POST',
@@ -499,26 +529,56 @@ async function loadWorkers() {
       body: JSON.stringify({})
     });
     var text = await res.text();
-    console.log('Workers raw response:', text);
     var data;
     try { data = JSON.parse(text); } catch(e) { console.log('Workers response not JSON:', e); }
-    console.log('Workers parsed data type:', typeof data);
-    console.log('Workers parsed data:', JSON.stringify(data).substring(0, 500));
     var workers = Array.isArray(data) ? data : (data && Array.isArray(data.value) ? data.value : null);
-    console.log('Workers array:', workers ? workers.length + ' items' : 'null');
     if (workers && workers.length > 0) {
-      var names = workers.map(function(w) { return w.FullName; }).filter(Boolean).sort();
-      console.log('Names found:', names);
-      select.innerHTML = '<option value="">Select your name...</option>' +
-        names.map(function(n) { return '<option value="' + n + '">' + n + '</option>'; }).join('');
+      allWorkerNames = workers.map(function(w) { return w.FullName; }).filter(Boolean).sort();
+      console.log('Loaded ' + allWorkerNames.length + ' workers');
     } else {
-      select.innerHTML = '<option value="">Could not load names</option>';
+      console.log('No workers returned');
     }
   } catch(e) {
     console.log('Could not load workers:', e);
-    select.innerHTML = '<option value="">Could not load names</option>';
   }
 }
+
+function filterWorkers() {
+  var input = document.getElementById('worker-input');
+  var list  = document.getElementById('worker-list');
+  var q     = input.value.trim().toLowerCase();
+  document.getElementById('worker-select').value = '';
+
+  var filtered = q
+    ? allWorkerNames.filter(function(n) { return n.toLowerCase().includes(q); })
+    : allWorkerNames;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="autocomplete-empty">No names found</div>';
+  } else {
+    list.innerHTML = filtered.map(function(n) {
+      var highlighted = q
+        ? n.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>')
+        : n;
+      return '<div class="autocomplete-item" onmousedown="selectWorker(\'' + n.replace(/'/g, "\\'") + '\')">' + highlighted + '</div>';
+    }).join('');
+  }
+  list.classList.add('open');
+}
+
+function selectWorker(name) {
+  document.getElementById('worker-input').value  = name;
+  document.getElementById('worker-select').value = name;
+  document.getElementById('worker-list').classList.remove('open');
+  clearErr();
+}
+
+document.addEventListener('click', function(e) {
+  var wrap = document.querySelector('.autocomplete-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('worker-list').classList.remove('open');
+  }
+});
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 function clearErr() { document.getElementById('login-error').style.display = 'none'; }
@@ -527,7 +587,8 @@ async function tryLogin() {
   var name = document.getElementById('worker-select').value;
   var pin  = document.getElementById('pin-input').value;
   var err  = document.getElementById('login-error');
-  if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
+  if (!name) { err.textContent = 'Please select your name from the list.'; err.style.display = 'block'; return; }
+  if (!pin)  { err.textContent = 'Please enter your PIN.'; err.style.display = 'block'; return; }
   clearErr();
 
   var overlay = document.getElementById('submit-overlay');
