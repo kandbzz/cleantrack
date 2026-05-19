@@ -528,7 +528,7 @@ async function tryLogin() {
           return {
             id:            item.ID,
             buildingName:  item.BuildingName  || '',
-            floor:         item.Floor         || '',
+            floor:         item.Title        || '',
             roomNumber:    item.RoomNumber     || '',
             washroomId:    item.WashroomID     || '',
             status:        item.Status && item.Status.Value ? item.Status.Value.toLowerCase() : 'pending',
@@ -663,12 +663,13 @@ function openBuilding(bName) {
         '<span class="floor-group-count">' + floorDone + '/' + floorRooms.length + ' complete</span>' +
       '</div>';
     floorRooms.forEach(function(r) {
-      var displayName = r.washroomId ? r.washroomId + ' \u00b7 ' + r.roomNumber : r.roomNumber;
-      var status = r.status || 'pending';
+      var displayName = r.roomNumber || '';
+      var displaySub  = r.washroomId ? 'Washroom ID ' + r.washroomId : '';
       html +=
         '<div class="pa-gallery-item" onclick="openRoom(\'' + r.id + '\')">' +
           '<div>' +
             '<div class="pa-gallery-title">' + displayName + '</div>' +
+            (displaySub ? '<div class="pa-gallery-sub">' + displaySub + '</div>' : '') +
           '</div>' +
           '<span class="pa-badge ' + badgeClass[status] + '">' + badgeLabel[status] + '</span>' +
         '</div>';
@@ -689,9 +690,10 @@ function openRoom(roomId) {
   var key = roomId;
   if (!taskStates[key]) taskStates[key] = new Array(TASKS.length).fill(false);
 
-  var displayName = room.washroomId ? room.washroomId : room.roomNumber;
+  var displayName = room.roomNumber || '';
+  var displaySub  = room.washroomId ? 'Washroom ID ' + room.washroomId : '';
   document.getElementById('task-room-title').textContent = displayName;
-  document.getElementById('task-room-meta').textContent  = room.roomNumber + ' \u00b7 ' + room.buildingName + ' \u00b7 Floor ' + room.floor;
+  document.getElementById('task-room-meta').textContent  = (displaySub ? displaySub + ' \u00b7 ' : '') + room.buildingName + ' \u00b7 Floor ' + room.floor;
   renderTasks();
   nav('s-tasks');
 }
