@@ -668,8 +668,8 @@ function openBuilding(bName) {
       '</div>';
     floorRooms.forEach(function(r) {
       var status      = r.status || 'pending';
-      var displayName = r.roomNumber || '';
-      var displaySub  = r.washroomId ? 'Washroom ID ' + r.washroomId : '';
+      var displayName = r.washroomId ? 'Room ' + r.roomNumber + ' \u00b7 Washroom ID ' + r.washroomId : 'Room ' + r.roomNumber;
+      var displaySub  = '';
       html +=
         '<div class="pa-gallery-item" onclick="openRoom(\'' + r.id + '\')">' +
           '<div>' +
@@ -695,10 +695,9 @@ function openRoom(roomId) {
   var key = roomId;
   if (!taskStates[key]) taskStates[key] = new Array(TASKS.length).fill(false);
 
-  var displayName = room.roomNumber || '';
-  var displaySub  = room.washroomId ? 'Washroom ID ' + room.washroomId : '';
+  var displayName = room.washroomId ? 'Room ' + room.roomNumber + ' \u00b7 Washroom ID ' + room.washroomId : 'Room ' + room.roomNumber;
   document.getElementById('task-room-title').textContent = displayName;
-  document.getElementById('task-room-meta').textContent  = (displaySub ? displaySub + ' \u00b7 ' : '') + room.buildingName + ' \u00b7 Floor ' + room.floor;
+  document.getElementById('task-room-meta').textContent  = room.buildingName + ' \u00b7 Floor ' + room.floor;
   renderTasks();
   nav('s-tasks');
 }
