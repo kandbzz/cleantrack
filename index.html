@@ -318,7 +318,9 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
         <div class="login-sub">Sign in to start your shift</div>
       </div>
       <label class="pa-label" for="worker-select">Your name</label>
-      <input class="pa-input" type="text" id="worker-select" placeholder="Enter your full name" style="letter-spacing:normal;" onchange="clearErr()" />
+      <select class="pa-dropdown" id="worker-select" onchange="clearErr()">
+        <option value="">Loading names...</option>
+      </select>
       <label class="pa-label" for="pin-input">PIN</label>
       <input class="pa-input" type="password" id="pin-input" placeholder="••••" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
       <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
@@ -421,8 +423,10 @@ function nav(id) {
 }
 
 // ─── Power Automate URLs ──────────────────────────────────────────────────────
-var FLOW_URL     = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
-var GET_FLOW_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/acb709b4fa794a0a856acde671ac017d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Em6TU2UK2re2W7SnDZIPun6_S9YfGUnJZ516JMXYBZs';
+var FLOW_URL         = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3f3b45d303be4abfb674c8a896c179b3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AKdQ0YJHe5QMgfnbdZk6pp2Qozp-5BKiwiCwoFuJZTY';
+var GET_FLOW_URL     = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/acb709b4fa794a0a856acde671ac017d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Em6TU2UK2re2W7SnDZIPun6_S9YfGUnJZ516JMXYBZs';
+var VALIDATE_URL     = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/84046b1b3ecb4fa79b86467d3c1e0227/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k7Sm55r0DN0VVXdahk4nh5fJoUctfQiGHSKr6ghMuKY';
+var GET_WORKERS_URL  = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c977f728155f40119dcf699b1035e40b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=qlkvgfXvF3t9KMVm5Vyhibt4cgVQEw-JJeW8uS-2jlM';
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function dashSearch() {
@@ -483,7 +487,32 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('dash-search-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') dashSearch();
   });
+  loadWorkers();
 });
+
+async function loadWorkers() {
+  var select = document.getElementById('worker-select');
+  try {
+    var res = await fetch(GET_WORKERS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    var text = await res.text();
+    var data;
+    try { data = JSON.parse(text); } catch(e) { console.log('Workers response not JSON:', e); }
+    if (Array.isArray(data) && data.length > 0) {
+      var names = data.map(function(w) { return w.FullName; }).filter(Boolean).sort();
+      select.innerHTML = '<option value="">Select your name...</option>' +
+        names.map(function(n) { return '<option value="' + n + '">' + n + '</option>'; }).join('');
+    } else {
+      select.innerHTML = '<option value="">Could not load names</option>';
+    }
+  } catch(e) {
+    console.log('Could not load workers:', e);
+    select.innerHTML = '<option value="">Could not load names</option>';
+  }
+}
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 function clearErr() { document.getElementById('login-error').style.display = 'none'; }
