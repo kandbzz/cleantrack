@@ -499,11 +499,16 @@ async function loadWorkers() {
       body: JSON.stringify({})
     });
     var text = await res.text();
+    console.log('Workers raw response:', text);
     var data;
     try { data = JSON.parse(text); } catch(e) { console.log('Workers response not JSON:', e); }
+    console.log('Workers parsed data type:', typeof data);
+    console.log('Workers parsed data:', JSON.stringify(data).substring(0, 500));
     var workers = Array.isArray(data) ? data : (data && Array.isArray(data.value) ? data.value : null);
+    console.log('Workers array:', workers ? workers.length + ' items' : 'null');
     if (workers && workers.length > 0) {
       var names = workers.map(function(w) { return w.FullName; }).filter(Boolean).sort();
+      console.log('Names found:', names);
       select.innerHTML = '<option value="">Select your name...</option>' +
         names.map(function(n) { return '<option value="' + n + '">' + n + '</option>'; }).join('');
     } else {
