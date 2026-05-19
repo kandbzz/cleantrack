@@ -538,6 +538,10 @@ async function tryLogin() {
           };
         });
         console.log('Loaded ' + allRooms.length + ' rooms from SharePoint');
+        if (allRooms.length > 0) {
+          console.log('First raw item:', JSON.stringify(data[0]));
+          console.log('First parsed room:', JSON.stringify(allRooms[0]));
+        }
       }
     }
   } catch(e) { console.log('Could not load rooms:', e); }
