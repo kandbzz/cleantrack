@@ -663,6 +663,7 @@ function openBuilding(bName) {
         '<span class="floor-group-count">' + floorDone + '/' + floorRooms.length + ' complete</span>' +
       '</div>';
     floorRooms.forEach(function(r) {
+      var status      = r.status || 'pending';
       var displayName = r.roomNumber || '';
       var displaySub  = r.washroomId ? 'Washroom ID ' + r.washroomId : '';
       html +=
