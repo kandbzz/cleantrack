@@ -318,13 +318,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
         <div class="login-sub">Sign in to start your shift</div>
       </div>
       <label class="pa-label" for="worker-select">Your name</label>
-      <select class="pa-dropdown" id="worker-select" onchange="clearErr()">
-        <option value="">Select your name...</option>
-        <option value="Pastrana Hilda">Pastrana Hilda</option>
-        <option value="Tania Vargas">Tania Vargas</option>
-        <option value="Richard Masson">Richard Masson</option>
-        <option value="Karina Alcca">Karina Alcca</option>
-      </select>
+      <input class="pa-input" type="text" id="worker-select" placeholder="Enter your full name" style="letter-spacing:normal;" onchange="clearErr()" />
       <label class="pa-label" for="pin-input">PIN</label>
       <input class="pa-input" type="password" id="pin-input" placeholder="••••" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
       <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
@@ -392,12 +386,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
 
 <script>
 // ─── Config ───────────────────────────────────────────────────────────────────
-const PINS = {
-  'Pastrana Hilda': '1234',
-  'Tania Vargas':   '2345',
-  'Richard Masson': '3456',
-  'Karina Alcca':   '4567'
-};
+var VALIDATE_URL = 'https://4c7d86ae983aebff9a4cf8c04210a0.f4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/84046b1b3ecb4fa79b86467d3c1e0227/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k7Sm55r0DN0VVXdahk4nh5fJoUctfQiGHSKr6ghMuKY';
 
 const TASKS = [
   'Wash & disinfect hand dryers',
@@ -504,14 +493,40 @@ async function tryLogin() {
   var pin  = document.getElementById('pin-input').value;
   var err  = document.getElementById('login-error');
   if (!name || !pin) { err.textContent = 'Please select your name and enter your PIN.'; err.style.display = 'block'; return; }
-  if (PINS[name] !== pin) { err.textContent = 'Incorrect PIN. Please try again.'; err.style.display = 'block'; return; }
   clearErr();
 
   var overlay = document.getElementById('submit-overlay');
   var msg     = document.getElementById('overlay-msg');
   msg.className   = 'pa-overlay-text';
-  msg.textContent = 'Loading rooms...';
+  msg.textContent = 'Verifying...';
   overlay.classList.add('active');
+
+  try {
+    var validateRes = await fetch(VALIDATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, pin: pin })
+    });
+    var validateText = await validateRes.text();
+    var validateData;
+    try { validateData = JSON.parse(validateText); } catch(e) { console.log('Validate response not JSON:', validateText); }
+
+    if (!validateData || !validateData.success) {
+      overlay.classList.remove('active');
+      err.textContent = validateData && validateData.message ? validateData.message : 'Incorrect PIN. Please try again.';
+      err.style.display = 'block';
+      return;
+    }
+  } catch(e) {
+    overlay.classList.remove('active');
+    err.textContent = 'Could not connect. Check your connection and try again.';
+    err.style.display = 'block';
+    console.log('Validate error:', e);
+    return;
+  }
+
+  // Login successful — now load rooms
+  msg.textContent = 'Loading rooms...';
 
   try {
     var res = await fetch(GET_FLOW_URL, {
@@ -528,9 +543,9 @@ async function tryLogin() {
           return {
             id:            item.ID,
             buildingName:  item.BuildingName  || '',
-            floor:         item.Title        || '',
+            floor:         item.Title         || '',
             roomNumber:    item.RoomNumber     || '',
-            washroomId:    item.RoomCode      || '',
+            washroomId:    item.RoomCode       || '',
             status:        item.Status && item.Status.Value ? item.Status.Value.toLowerCase() : 'pending',
             caretaker:     item.Caretaker      || '',
             notes:         item.Notes          || '',
