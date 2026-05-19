@@ -530,7 +530,7 @@ async function tryLogin() {
             buildingName:  item.BuildingName  || '',
             floor:         item.Title        || '',
             roomNumber:    item.RoomNumber     || '',
-            washroomId:    item.WashroomID     || '',
+            washroomId:    item.RoomCode      || '',
             status:        item.Status && item.Status.Value ? item.Status.Value.toLowerCase() : 'pending',
             caretaker:     item.Caretaker      || '',
             notes:         item.Notes          || '',
