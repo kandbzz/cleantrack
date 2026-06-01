@@ -489,13 +489,16 @@ async function dashSearch() {
 
     var html = '<div class="dash-result">';
     var first = results[0];
-    var roomName    = first.RoomNumber  || q;
-    var roomCode    = first.RoomCode    || q;
+    var roomName     = first.RoomNumber   || q;
+    var roomCode     = first.RoomCode     || q;
     var buildingName = first.BuildingName || '';
-    var floor       = first.Title       || '';
+    var floor        = first.Title        || '';
     var currentStatus = first.Status && first.Status.Value ? first.Status.Value.toLowerCase() : 'pending';
-    var statusColor = STATUS_COLORS[currentStatus] || STATUS_COLORS['pending'];
-    var statusLabel = STATUS_LABELS[currentStatus] || 'Pending';
+    var statusColor  = STATUS_COLORS[currentStatus] || STATUS_COLORS['pending'];
+    var statusLabel  = STATUS_LABELS[currentStatus] || 'Pending';
+
+    var lastCleaned  = first.TimeSubmitted ? formatDate(first.TimeSubmitted) : 'Not yet cleaned today';
+    var secondCleaned = results[1] && results[1].TimeSubmitted ? formatDate(results[1].TimeSubmitted) : '—';
 
     html +=
       '<div class="dash-room-name">' + roomName + '</div>' +
@@ -506,26 +509,15 @@ async function dashSearch() {
           '<div style="margin-top:6px;"><span class="dash-history-badge" style="' + statusColor + '">' + statusLabel + '</span></div>' +
         '</div>' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">Last cleaned by</div>' +
-          '<div class="dash-stat-value">' + (first.Caretaker || '—') + '</div>' +
+          '<div class="dash-stat-label">Last cleaned</div>' +
+          '<div class="dash-stat-value">' + lastCleaned + '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="dash-history-label">Recent cleaning history</div>';
-
-    results.forEach(function(r) {
-      var s = r.Status && r.Status.Value ? r.Status.Value.toLowerCase() : 'pending';
-      var initials = (r.Caretaker || '?').split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
-      var time = r.TimeSubmitted ? formatDate(r.TimeSubmitted) : '—';
-      html +=
-        '<div class="dash-history-row">' +
-          '<div class="dash-avatar">' + initials + '</div>' +
-          '<div class="dash-history-info">' +
-            '<div class="dash-history-name">' + (r.Caretaker || 'Unknown') + '</div>' +
-            '<div class="dash-history-time">' + time + '</div>' +
-          '</div>' +
-          '<span class="dash-history-badge" style="' + STATUS_COLORS[s] + '">' + STATUS_LABELS[s] + '</span>' +
-        '</div>';
-    });
+      '<div class="dash-history-label">Previous cleaning</div>' +
+      '<div class="dash-stat" style="margin-bottom:6px;">' +
+        '<div class="dash-stat-label">2nd last cleaned</div>' +
+        '<div class="dash-stat-value">' + secondCleaned + '</div>' +
+      '</div>';
 
     html += '</div>';
     body.innerHTML = html;
