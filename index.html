@@ -444,7 +444,7 @@ const STATUS_COLORS = {
   policed:  'background:#f3eeff;color:#5b3a8c',
   pending:  'background:#fef7e6;color:#7a5200'
 };
-const STATUS_LABELS = { complete: 'Complete', policed: 'Policed', pending: 'Pending' };
+const STATUS_LABELS = { complete: 'Complete', policed: 'Touch-up Completed', pending: 'Pending' };
 
 // ─── State ────────────────────────────────────────────────────────────────────
 // allRooms: flat array of all rooms loaded from SharePoint
@@ -794,7 +794,7 @@ function openBuilding(bName) {
   });
 
   var badgeClass  = { complete: 'badge-done', policed: 'badge-policed', pending: 'badge-pending' };
-  var badgeLabel  = { complete: 'Complete',   policed: 'Policed',       pending: 'Pending'       };
+  var badgeLabel  = { complete: 'Complete', policed: 'Touch-up Completed', pending: 'Pending' };
 
   var html = '';
   // Sort floors: handle numeric and alphanumeric (B01, 1, 2, 10...)
