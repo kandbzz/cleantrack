@@ -287,6 +287,16 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
 .autocomplete-item:hover { background: var(--blue-light); color: var(--blue); }
 .autocomplete-item mark { background: none; color: var(--blue); font-weight: 600; }
 .autocomplete-empty { padding: 11px 14px; font-size: 14px; color: var(--gray-400); font-family: 'DM Sans', sans-serif; }
+.task-na-btn {
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  border-radius: 20px; border: 1.5px solid var(--gray-200);
+  background: #fff; color: var(--gray-400); cursor: pointer;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.task-na-btn.active { background: var(--gray-100); border-color: var(--gray-400); color: var(--gray-600); }
+.pa-checkbox-row.na { background: var(--gray-50); }
+.pa-checkbox-row.na label { color: var(--gray-400); text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -409,7 +419,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
       <div class="pa-progress-bar"><div class="pa-progress-fill" id="task-fill" style="width:0%"></div></div>
       <div class="pa-progress-text" id="task-count-label">0 of 7 tasks complete</div>
       <button class="pa-btn" id="done-btn" onclick="markStatus('complete')" style="margin-top:0; opacity:0.4; cursor:default;">Mark as complete</button>
-      <button class="pa-btn-secondary" onclick="markStatus('policed')">Mark as policed</button>
+      <button class="pa-btn-secondary" onclick="markStatus('policed')">Touch-up Cleaning</button>
     </div>
   </div>
 
@@ -829,7 +839,7 @@ function openRoom(roomId) {
   if (!room) return;
   currentRoomIdx = roomId;
   var key = roomId;
-  if (!taskStates[key]) taskStates[key] = new Array(TASKS.length).fill(false);
+  if (!taskStates[key]) taskStates[key] = new Array(TASKS.length).fill('unchecked');
 
   var displayName = room.washroomId ? 'Room ' + room.roomNumber + ' \u00b7 Washroom ID ' + room.washroomId : 'Room ' + room.roomNumber;
   document.getElementById('task-room-title').textContent = displayName;
@@ -842,27 +852,47 @@ function renderTasks() {
   var key    = currentRoomIdx;
   var states = taskStates[key];
   document.getElementById('task-gallery').innerHTML = TASKS.map(function(t, i) {
-    return '<div class="pa-checkbox-row">' +
-      '<input type="checkbox" id="ck' + i + '" ' + (states[i] ? 'checked' : '') + ' onchange="toggleTask(' + i + ')">' +
-      '<label for="ck' + i + '" class="' + (states[i] ? 'done' : '') + '">' + t + '</label>' +
+    var state   = states[i];
+    var isChecked = state === 'checked';
+    var isNA      = state === 'na';
+    return '<div class="pa-checkbox-row' + (isNA ? ' na' : '') + '">' +
+      '<input type="checkbox" id="ck' + i + '" ' + (isChecked ? 'checked' : '') + (isNA ? ' disabled' : '') + ' onchange="toggleTask(' + i + ')">' +
+      '<label for="ck' + i + '" class="' + (isChecked ? 'done' : '') + '">' + t + '</label>' +
+      '<button class="task-na-btn' + (isNA ? ' active' : '') + '" onclick="toggleNA(' + i + ')">' + (isNA ? 'N/A ✓' : 'N/A') + '</button>' +
     '</div>';
   }).join('');
-  var done = states.filter(Boolean).length;
-  document.getElementById('task-fill').style.width        = Math.round(done / TASKS.length * 100) + '%';
-  document.getElementById('task-count-label').textContent = done + ' of ' + TASKS.length + ' tasks complete';
+  var actionable = states.filter(function(s) { return s !== 'na'; }).length;
+  var done       = states.filter(function(s) { return s === 'checked'; }).length;
+  var naCount    = states.filter(function(s) { return s === 'na'; }).length;
+  var allDone    = done === actionable && actionable >= 0;
+  var pct        = actionable > 0 ? Math.round(done / actionable * 100) : 100;
+  document.getElementById('task-fill').style.width        = pct + '%';
+  document.getElementById('task-count-label').textContent = done + ' of ' + actionable + ' tasks complete' + (naCount > 0 ? ' (' + naCount + ' N/A)' : '');
   var btn = document.getElementById('done-btn');
-  btn.style.opacity = done === TASKS.length ? '1'       : '0.4';
-  btn.style.cursor  = done === TASKS.length ? 'pointer' : 'default';
+  btn.style.opacity = allDone ? '1'       : '0.4';
+  btn.style.cursor  = allDone ? 'pointer' : 'default';
 }
 
 function toggleTask(i) {
-  taskStates[currentRoomIdx][i] = !taskStates[currentRoomIdx][i];
+  var states = taskStates[currentRoomIdx];
+  if (states[i] === 'na') return;
+  states[i] = states[i] === 'checked' ? 'unchecked' : 'checked';
+  renderTasks();
+}
+
+function toggleNA(i) {
+  var states = taskStates[currentRoomIdx];
+  states[i] = states[i] === 'na' ? 'unchecked' : 'na';
   renderTasks();
 }
 
 // ─── Submit ───────────────────────────────────────────────────────────────────
 async function markStatus(status) {
-  if (status === 'complete' && !taskStates[currentRoomIdx].every(Boolean)) return;
+  if (status === 'complete') {
+    var states = taskStates[currentRoomIdx];
+    var allDone = states.every(function(s) { return s === 'checked' || s === 'na'; });
+    if (!allDone) return;
+  }
 
   var room    = allRooms.find(function(r) { return String(r.id) === String(currentRoomIdx); });
   if (!room) return;
