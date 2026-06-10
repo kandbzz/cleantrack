@@ -543,7 +543,7 @@ async function dashSearch() {
   }
 
   // Show loading state
-  body.innerHTML = '<div class="dash-empty"><div class="dash-empty-icon" style="animation:spin 1s linear infinite;display:inline-block;">⏳</div><div class="dash-empty-title">Searching...</div></div>';
+  body.innerHTML = '<div class="dash-empty"><div class="dash-empty-icon">⏳</div><div class="dash-empty-title">Searching...</div></div>';
 
   try {
     var res = await fetch(HISTORY_FLOW_URL, {
@@ -642,7 +642,6 @@ async function loadWorkers() {
     console.log('Could not load workers:', e);
   }
 }
-
 function filterWorkers() {
   var input = document.getElementById('worker-input');
   var list  = document.getElementById('worker-list');
