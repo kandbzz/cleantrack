@@ -297,13 +297,51 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
 .task-na-btn.active { background: var(--gray-100); border-color: var(--gray-400); color: var(--gray-600); }
 .pa-checkbox-row.na { background: var(--gray-50); }
 .pa-checkbox-row.na label { color: var(--gray-400); text-decoration: line-through; }
+.modal-overlay {
+  display: none; position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+  z-index: 20; align-items: center; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: #fff; border-radius: var(--radius-md);
+  padding: 24px 20px; margin: 0 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  width: 100%; max-width: 320px;
+}
+.modal-title { font-size: 16px; font-weight: 600; color: var(--gray-900); margin-bottom: 8px; }
+.modal-sub { font-size: 14px; color: var(--gray-600); margin-bottom: 20px; line-height: 1.5; }
+.modal-btn-row { display: flex; gap: 10px; }
+.modal-btn-cancel {
+  flex: 1; height: 44px; background: #fff; color: var(--blue);
+  border: 1.5px solid var(--blue); border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+}
+.modal-btn-cancel:hover { background: var(--blue-light); }
+.modal-btn-confirm {
+  flex: 1; height: 44px; background: var(--red); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+}
+.modal-btn-confirm:hover { background: #991b1b; }
 </style>
 </head>
 <body>
 <h2 class="sr-only">CleanTrack app</h2>
 
 <div class="pa-shell">
-  <div class="pa-overlay" id="submit-overlay">
+  <div class="modal-overlay" id="logout-modal">
+    <div class="modal-box">
+      <div class="modal-title">Log out?</div>
+      <div class="modal-sub">Are you sure you want to log out?</div>
+      <div class="modal-btn-row">
+        <button class="modal-btn-cancel" onclick="closeLogoutModal()">Stay logged in</button>
+        <button class="modal-btn-confirm" onclick="confirmLogout()">Log out</button>
+      </div>
+    </div>
+  </div>
     <div class="spinner"></div>
     <div class="pa-overlay-text" id="overlay-msg">Loading...</div>
   </div>
@@ -370,7 +408,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
   <!-- SCREEN 2: BUILDINGS -->
   <div id="s-buildings" class="pa-screen">
     <div class="pa-header">
-      <button class="pa-back" onclick="nav('s-login')">&#8592; Back</button>
+      <button class="pa-back" onclick="showLogoutModal()">&#8592; Back</button>
       <span class="pa-header-title">Buildings</span>
       <span style="font-size:13px; color:rgba(255,255,255,0.7); font-weight:500;" id="header-worker"></span>
     </div>
@@ -461,7 +499,28 @@ var currentFloor    = '';
 var currentRoomIdx  = null;
 var taskStates      = {};
 
-// ─── Navigation ───────────────────────────────────────────────────────────────
+// ─── Logout Modal ─────────────────────────────────────────────────────────────
+function showLogoutModal() {
+  document.getElementById('logout-modal').classList.add('active');
+}
+
+function closeLogoutModal() {
+  document.getElementById('logout-modal').classList.remove('active');
+}
+
+function confirmLogout() {
+  document.getElementById('logout-modal').classList.remove('active');
+  // Reset state
+  allRooms = [];
+  taskStates = {};
+  document.getElementById('worker-input').value = '';
+  document.getElementById('worker-select').value = '';
+  document.getElementById('pin-input').value = '';
+  document.getElementById('building-search').value = '';
+  nav('s-login');
+}
+
+
 function nav(id) {
   document.querySelectorAll('.pa-screen').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
@@ -731,19 +790,19 @@ function renderBuildings() {
   var html = '';
   Object.keys(buildings).sort().forEach(function(bName) {
     var rooms    = buildings[bName];
-    var complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
-    var policed  = rooms.filter(function(r) { return r.status === 'policed';  }).length;
-    var pending  = rooms.filter(function(r) { return r.status === 'pending';  }).length;
-    var allDone  = complete === rooms.length && rooms.length > 0;
+    var complete  = rooms.filter(function(r) { return r.status === 'complete'; }).length;
+    var touchup   = rooms.filter(function(r) { return r.status === 'policed' || r.status === 'touch up completed'; }).length;
+    var pending   = rooms.filter(function(r) { return r.status === 'pending';  }).length;
+    var allDone   = complete === rooms.length && rooms.length > 0;
     var badge;
     if (allDone) {
       badge = '<span class="pa-badge badge-done">All complete</span>';
     } else {
       var parts = [];
       if (complete > 0) parts.push(complete + ' complete');
-      if (policed  > 0) parts.push(policed  + ' policed');
+      if (touchup  > 0) parts.push(touchup  + ' touch-up');
       if (pending  > 0) parts.push(pending  + ' pending');
-      var cls = policed > 0 && pending === 0 ? 'badge-policed' : complete > 0 || policed > 0 ? 'badge-inprog' : 'badge-pending';
+      var cls = touchup > 0 && pending === 0 ? 'badge-policed' : complete > 0 || touchup > 0 ? 'badge-inprog' : 'badge-pending';
       badge = '<span class="pa-badge ' + cls + '">' + parts.join(' \u00b7 ') + '</span>';
     }
     html +=
