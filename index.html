@@ -656,12 +656,13 @@ function filterWorkers() {
   var q     = input.value.trim().toLowerCase();
   document.getElementById('worker-select').value = '';
 
-  var filtered = q
+  var filtered = q.length >= 3
     ? allWorkerNames.filter(function(n) { return n.toLowerCase().includes(q); })
-    : allWorkerNames;
+    : [];
 
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="autocomplete-empty">No names found</div>';
+  if (filtered.length === 0 || q.length < 3) {
+    list.innerHTML = q.length >= 3 ? '<div class="autocomplete-empty">No names found</div>' : '';
+    if (q.length < 3) { list.classList.remove('open'); return; }
   } else {
     list.innerHTML = filtered.map(function(n) {
       var highlighted = q
