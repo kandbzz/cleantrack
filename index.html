@@ -689,6 +689,8 @@ async function tryLogin() {
           };
         });
         console.log('Loaded ' + allRooms.length + ' rooms from SharePoint');
+        var uniqueStatuses = allRooms.map(function(r) { return r.status; }).filter(function(v, i, a) { return a.indexOf(v) === i; });
+        console.log('Unique statuses found:', uniqueStatuses);
         if (allRooms.length > 0) {
           console.log('First raw item:', JSON.stringify(data[0]));
           console.log('First parsed room:', JSON.stringify(allRooms[0]));
@@ -739,10 +741,10 @@ function renderBuildings() {
       badge = '<span class="pa-badge badge-done">All complete</span>';
     } else {
       var parts = [];
-      if (complete > 0) parts.push(complete + ' complete');
-      if (touchup  > 0) parts.push(touchup  + ' touch-up');
-      if (pending  > 0) parts.push(pending  + ' pending');
-      var cls = touchup > 0 && pending === 0 ? 'badge-policed' : complete > 0 || touchup > 0 ? 'badge-inprog' : 'badge-pending';
+      parts.push(complete + ' complete');
+      parts.push(touchup  + ' touch-up');
+      parts.push(pending  + ' pending');
+      var cls = pending === 0 ? 'badge-done' : touchup > 0 || complete > 0 ? 'badge-inprog' : 'badge-pending';
       badge = '<span class="pa-badge ' + cls + '">' + parts.join(' \u00b7 ') + '</span>';
     }
     html +=
