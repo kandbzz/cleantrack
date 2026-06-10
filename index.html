@@ -445,12 +445,11 @@ const TASKS = [
 ];
 
 const STATUS_COLORS = {
-  complete:          'background:#e6f5ee;color:#1a7a4a',
-  'touch up completed': 'background:#f3eeff;color:#5b3a8c',
-  policed:           'background:#f3eeff;color:#5b3a8c',
-  pending:           'background:#fef7e6;color:#7a5200'
+  complete:              'background:#e6f5ee;color:#1a7a4a',
+  'touch up completed':  'background:#f3eeff;color:#5b3a8c',
+  pending:               'background:#fef7e6;color:#7a5200'
 };
-const STATUS_LABELS = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', policed: 'Touch-up Completed', pending: 'Pending' };
+const STATUS_LABELS = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
 
 // ─── State ────────────────────────────────────────────────────────────────────
 // allRooms: flat array of all rooms loaded from SharePoint
@@ -732,7 +731,7 @@ function renderBuildings() {
   Object.keys(buildings).sort().forEach(function(bName) {
     var rooms    = buildings[bName];
     var complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
-    var policed  = rooms.filter(function(r) { return r.status === 'policed';  }).length;
+    var touchup  = rooms.filter(function(r) { return r.status === 'touch up completed'; }).length;
     var pending  = rooms.filter(function(r) { return r.status === 'pending';  }).length;
     var allDone  = complete === rooms.length && rooms.length > 0;
     var badge;
@@ -741,9 +740,9 @@ function renderBuildings() {
     } else {
       var parts = [];
       if (complete > 0) parts.push(complete + ' complete');
-      if (policed  > 0) parts.push(policed  + ' policed');
+      if (touchup  > 0) parts.push(touchup  + ' touch-up');
       if (pending  > 0) parts.push(pending  + ' pending');
-      var cls = policed > 0 && pending === 0 ? 'badge-policed' : complete > 0 || policed > 0 ? 'badge-inprog' : 'badge-pending';
+      var cls = touchup > 0 && pending === 0 ? 'badge-policed' : complete > 0 || touchup > 0 ? 'badge-inprog' : 'badge-pending';
       badge = '<span class="pa-badge ' + cls + '">' + parts.join(' \u00b7 ') + '</span>';
     }
     html +=
@@ -799,8 +798,8 @@ function openBuilding(bName) {
     floors[f].push(r);
   });
 
-  var badgeClass  = { complete: 'badge-done', policed: 'badge-policed', 'touch up completed': 'badge-policed', pending: 'badge-pending' };
-  var badgeLabel  = { complete: 'Complete', policed: 'Touch-up Completed', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
+  var badgeClass  = { complete: 'badge-done', 'touch up completed': 'badge-policed', pending: 'badge-pending' };
+  var badgeLabel  = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
 
   var html = '';
   // Sort floors: handle numeric and alphanumeric (B01, 1, 2, 10...)
