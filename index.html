@@ -579,27 +579,40 @@ async function dashSearch() {
     var statusColor  = STATUS_COLORS[currentStatus] || STATUS_COLORS['pending'];
     var statusLabel  = STATUS_LABELS[currentStatus] || first.Status || 'Pending';
 
-    var lastCleaned   = first.Date ? formatDate(first.Date) : 'Not yet cleaned today';
-    var secondCleaned = results[1] && results[1].Date ? formatDate(results[1].Date) : '—';
-
     html +=
-      '<div class="dash-room-name">' + roomName + '</div>' +
-      '<div class="dash-room-meta">' + roomCode + ' &nbsp;·&nbsp; ' + buildingName + ' &nbsp;·&nbsp; Floor ' + floor + '</div>' +
-      '<div class="dash-stat-row">' +
+      '<div class="dash-room-name">' + buildingName + '</div>' +
+      '<div class="dash-room-meta">' +
+        'Floor ' + floor + ' &nbsp;·&nbsp; Room ' + roomName + ' &nbsp;·&nbsp; ' + roomCode +
+      '</div>' +
+      '<div class="dash-stat-row" style="margin-top:12px;">' +
         '<div class="dash-stat">' +
           '<div class="dash-stat-label">Current status</div>' +
           '<div style="margin-top:6px;"><span class="dash-history-badge" style="' + statusColor + '">' + statusLabel + '</span></div>' +
         '</div>' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">Last cleaned</div>' +
-          '<div class="dash-stat-value">' + lastCleaned + '</div>' +
+          '<div class="dash-stat-label">Total cleanings</div>' +
+          '<div class="dash-stat-value">' + results.length + '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="dash-history-label">Previous cleaning</div>' +
-      '<div class="dash-stat" style="margin-bottom:6px;">' +
-        '<div class="dash-stat-label">2nd last cleaned</div>' +
-        '<div class="dash-stat-value">' + secondCleaned + '</div>' +
-      '</div>';
+      '<div class="dash-history-label" style="margin-top:14px;">Cleaning history</div>';
+
+    results.forEach(function(r) {
+      var s           = (r.Status || 'pending').toLowerCase();
+      var sColor      = STATUS_COLORS[s] || STATUS_COLORS['pending'];
+      var sLabel      = STATUS_LABELS[s] || r.Status || 'Unknown';
+      var date        = r.Date ? formatDate(r.Date) : '—';
+      var caretaker   = r.Caretaker || 'Unknown';
+      var initials    = caretaker.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+      html +=
+        '<div class="dash-history-row">' +
+          '<div class="dash-avatar">' + initials + '</div>' +
+          '<div class="dash-history-info">' +
+            '<div class="dash-history-name">' + caretaker + '</div>' +
+            '<div class="dash-history-time">' + date + '</div>' +
+          '</div>' +
+          '<span class="dash-history-badge" style="' + sColor + '">' + sLabel + '</span>' +
+        '</div>';
+    });
 
     html += '</div>';
     body.innerHTML = html;
