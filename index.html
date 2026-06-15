@@ -570,17 +570,17 @@ async function dashSearch() {
     }
 
     var html = '<div class="dash-result">';
-    var first = results[0];
-    var roomName     = first.RoomNumber   || q;
-    var roomCode     = first.RoomCode     || q;
-    var buildingName = first.BuildingName || '';
-    var floor        = first.Title        || '';
-    var currentStatus = first.Status && first.Status.Value ? first.Status.Value.toLowerCase() : 'pending';
+    var first        = results[0];
+    var roomName     = first.RoomNumber  || q;
+    var roomCode     = first.WashroomID  || q;
+    var buildingName = first.Title       || '';
+    var floor        = first.Floor       || '';
+    var currentStatus = (first.Status || 'pending').toLowerCase();
     var statusColor  = STATUS_COLORS[currentStatus] || STATUS_COLORS['pending'];
-    var statusLabel  = STATUS_LABELS[currentStatus] || 'Pending';
+    var statusLabel  = STATUS_LABELS[currentStatus] || first.Status || 'Pending';
 
-    var lastCleaned  = first.TimeSubmitted ? formatDate(first.TimeSubmitted) : 'Not yet cleaned today';
-    var secondCleaned = results[1] && results[1].TimeSubmitted ? formatDate(results[1].TimeSubmitted) : '—';
+    var lastCleaned   = first.Date ? formatDate(first.Date) : 'Not yet cleaned today';
+    var secondCleaned = results[1] && results[1].Date ? formatDate(results[1].Date) : '—';
 
     html +=
       '<div class="dash-room-name">' + roomName + '</div>' +
