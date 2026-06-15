@@ -576,8 +576,10 @@ async function dashSearch() {
     var buildingName = first.Title       || '';
     var floor        = first.Floor       || '';
     var currentStatus = (first.Status || 'pending').toLowerCase();
-    var statusColor  = STATUS_COLORS[currentStatus] || STATUS_COLORS['pending'];
-    var statusLabel  = STATUS_LABELS[currentStatus] || first.Status || 'Pending';
+
+    var completedResults = results.filter(function(r) { return (r.Status || '').toLowerCase() === 'complete'; });
+    var lastComplete  = completedResults[0] && completedResults[0].Date ? formatDate(completedResults[0].Date) : '—';
+    var secondComplete = completedResults[1] && completedResults[1].Date ? formatDate(completedResults[1].Date) : '—';
 
     html +=
       '<div class="dash-room-name">' + buildingName + '</div>' +
@@ -586,12 +588,12 @@ async function dashSearch() {
       '</div>' +
       '<div class="dash-stat-row" style="margin-top:12px;">' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">Current status</div>' +
-          '<div style="margin-top:6px;"><span class="dash-history-badge" style="' + statusColor + '">' + statusLabel + '</span></div>' +
+          '<div class="dash-stat-label">Last fully cleaned</div>' +
+          '<div class="dash-stat-value">' + lastComplete + '</div>' +
         '</div>' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">Total cleanings</div>' +
-          '<div class="dash-stat-value">' + results.length + '</div>' +
+          '<div class="dash-stat-label">2nd last fully cleaned</div>' +
+          '<div class="dash-stat-value">' + secondComplete + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="dash-history-label" style="margin-top:14px;">Cleaning history</div>';
