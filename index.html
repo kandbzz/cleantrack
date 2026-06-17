@@ -599,18 +599,14 @@ async function dashSearch() {
       '<div class="dash-history-label" style="margin-top:14px;">Cleaning history</div>';
 
     results.forEach(function(r) {
-      var s           = (r.Status || 'pending').toLowerCase();
-      var sColor      = STATUS_COLORS[s] || STATUS_COLORS['pending'];
-      var sLabel      = STATUS_LABELS[s] || r.Status || 'Unknown';
-      var date        = r.Date ? formatDate(r.Date) : '—';
-      var caretaker   = r.Caretaker || 'Unknown';
-      var initials    = caretaker.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+      var s      = (r.Status || 'pending').toLowerCase();
+      var sColor = STATUS_COLORS[s] || STATUS_COLORS['pending'];
+      var sLabel = STATUS_LABELS[s] || r.Status || 'Unknown';
+      var date   = r.Date ? formatDate(r.Date) : '—';
       html +=
         '<div class="dash-history-row">' +
-          '<div class="dash-avatar">' + initials + '</div>' +
           '<div class="dash-history-info">' +
-            '<div class="dash-history-name">' + caretaker + '</div>' +
-            '<div class="dash-history-time">' + date + '</div>' +
+            '<div class="dash-history-time" style="font-size:13px; color:var(--gray-900); font-weight:500;">' + date + '</div>' +
           '</div>' +
           '<span class="dash-history-badge" style="' + sColor + '">' + sLabel + '</span>' +
         '</div>';
