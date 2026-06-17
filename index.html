@@ -728,10 +728,14 @@ async function tryLogin() {
 
     if (!validateData || !validateData.success) {
       overlay.classList.remove('active');
-      err.textContent = validateData && validateData.message ? validateData.message : 'Incorrect PIN. Please try again.';
+      err.textContent = validateData && validateData.message ? validateData.message : 'Incorrect password. Please try again.';
       err.style.display = 'block';
       return;
     }
+
+    var cleaningService = validateData.cleaningService || '';
+    console.log('Cleaning service:', cleaningService);
+
   } catch(e) {
     overlay.classList.remove('active');
     err.textContent = 'Could not connect. Check your connection and try again.';
@@ -747,7 +751,7 @@ async function tryLogin() {
     var res = await fetch(GET_FLOW_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ building: 'all' })
+      body: JSON.stringify({ cleaningService: cleaningService })
     });
     if (res.ok || res.status === 202) {
       var text = await res.text();
