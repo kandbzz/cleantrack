@@ -410,7 +410,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
         <div class="autocomplete-list" id="worker-list"></div>
       </div>
       <label class="pa-label" for="pin-input">Password</label>
-      <input class="pa-input" type="text" id="pin-input" placeholder="Enter your password" maxlength="4" inputmode="numeric" style="letter-spacing:normal;" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
+      <input class="pa-input" type="text" id="pin-input" placeholder="Enter your password" style="letter-spacing:normal;" onkeydown="if(event.key==='Enter')tryLogin()" onchange="clearErr()" />
       <div class="pa-error" id="login-error">Incorrect PIN. Please try again.</div>
       <button class="pa-btn" onclick="tryLogin()">Start shift</button>
     </div>
