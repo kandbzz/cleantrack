@@ -367,7 +367,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
         <span class="dash-logo-title">CleanTrack</span>
       </div>
       <div class="dash-search-row">
-        <input class="dash-search-input" id="dash-search-input" type="text" placeholder="Search by room or washroom ID..." />
+        <input class="dash-search-input" id="dash-search-input" type="text" placeholder="Search by washroom ID..." />
         <button class="dash-search-btn" onclick="dashSearch()">Search</button>
       </div>
     </div>
@@ -375,7 +375,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
       <div class="dash-empty">
         <div class="dash-empty-icon">🔍</div>
         <div class="dash-empty-title">Search for a room</div>
-        <div class="dash-empty-sub">Enter a room name or washroom ID to see its cleaning status.</div>
+        <div class="dash-empty-sub">Enter a washroom ID to see its cleaning status.</div>
       </div>
     </div>
     <div class="dash-login-bar">
@@ -437,7 +437,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
   <!-- SCREEN 3: FLOORS -->
   <div id="s-floors" class="pa-screen">
     <div class="pa-header">
-      <button class="pa-back" onclick="nav('s-buildings')">&#8592; Buildings</button>
+      <button class="pa-back" onclick="renderBuildings(); nav('s-buildings')">&#8592; Buildings</button>
       <span class="pa-header-title" id="floors-building-title"></span>
       <span style="font-size:13px; color:rgba(255,255,255,0.7);" id="floors-progress-header"></span>
     </div>
