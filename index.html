@@ -437,7 +437,7 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
   <!-- SCREEN 3: FLOORS -->
   <div id="s-floors" class="pa-screen">
     <div class="pa-header">
-      <button class="pa-back" onclick="renderBuildings(); nav('s-buildings')">&#8592; Buildings</button>
+      <button class="pa-back" onclick="nav('s-buildings'); renderBuildings();">&#8592; Buildings</button>
       <span class="pa-header-title" id="floors-building-title"></span>
       <span style="font-size:13px; color:rgba(255,255,255,0.7);" id="floors-progress-header"></span>
     </div>
@@ -1011,6 +1011,7 @@ async function markStatus(status) {
       msg.className   = 'pa-overlay-success';
       msg.textContent = 'Submitted successfully!';
       room.status = status === 'policed' ? 'touch up completed' : 'complete';
+      renderBuildings();
       setTimeout(function() {
         overlay.classList.remove('active');
         nav('s-floors');
