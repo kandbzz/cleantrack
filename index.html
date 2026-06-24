@@ -346,6 +346,13 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
   color: var(--gray-400); display: flex; align-items: center;
 }
 .password-toggle:hover { color: var(--gray-600); }
+.refresh-btn {
+  background: none; border: none; cursor: pointer; padding: 4px;
+  color: rgba(255,255,255,0.75); display: flex; align-items: center;
+  border-radius: 6px; transition: color 0.15s, background 0.15s;
+}
+.refresh-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
 </style>
 </head>
 <body>
@@ -440,7 +447,12 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
     <div class="pa-header">
       <button class="pa-back" onclick="showLogoutModal()">&#8592; Back</button>
       <span class="pa-header-title">Buildings</span>
-      <span style="font-size:13px; color:rgba(255,255,255,0.7); font-weight:500;" id="header-worker"></span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:13px; color:rgba(255,255,255,0.7); font-weight:500;" id="header-worker"></span>
+        <button class="refresh-btn" id="buildings-refresh-btn" onclick="refreshAllRooms('buildings')" title="Refresh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
     <div class="pa-body">
       <div class="search-wrap">
@@ -458,7 +470,12 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
     <div class="pa-header">
       <button class="pa-back" onclick="nav('s-buildings'); renderBuildings();">&#8592; Buildings</button>
       <span class="pa-header-title" id="floors-building-title"></span>
-      <span style="font-size:13px; color:rgba(255,255,255,0.7);" id="floors-progress-header"></span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:13px; color:rgba(255,255,255,0.7);" id="floors-progress-header"></span>
+        <button class="refresh-btn" id="floors-refresh-btn" onclick="refreshAllRooms('floors')" title="Refresh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
     <div class="pa-body">
       <div class="search-wrap">
@@ -519,7 +536,9 @@ const STATUS_COLORS = {
 };
 const STATUS_LABELS = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
 
-// ─── State ────────────────────────────────────────────────────────────────────
+var currentCleaningService = '';
+
+
 // allRooms: flat array of all rooms loaded from SharePoint
 // each item: { id, buildingName, floor, roomNumber, washroomId, status, caretaker, notes, timeSubmitted }
 var allRooms = [];
@@ -528,7 +547,50 @@ var currentFloor    = '';
 var currentRoomIdx  = null;
 var taskStates      = {};
 
-// ─── Logout Modal ─────────────────────────────────────────────────────────────
+async function refreshAllRooms(screen) {
+  var btnId = screen === 'buildings' ? 'buildings-refresh-btn' : 'floors-refresh-btn';
+  var btn   = document.getElementById(btnId);
+  if (btn) btn.classList.add('spinning');
+
+  try {
+    var res = await fetch(GET_FLOW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cleaningService: currentCleaningService })
+    });
+    if (res.ok || res.status === 202) {
+      var text = await res.text();
+      var data;
+      try { data = JSON.parse(text); } catch(e) { console.log('Refresh parse error:', e); }
+      if (Array.isArray(data)) {
+        allRooms = data.map(function(item) {
+          return {
+            id:            item.ID,
+            buildingName:  item.BuildingName  || '',
+            floor:         item.Title         || '',
+            roomNumber:    item.RoomNumber     || '',
+            washroomId:    item.RoomCode       || '',
+            status:        item.Status && item.Status.Value ? item.Status.Value.toLowerCase() : 'pending',
+            caretaker:     item.Caretaker      || '',
+            notes:         item.Notes          || '',
+            timeSubmitted: item.TimeSubmitted   || ''
+          };
+        });
+        console.log('Refreshed ' + allRooms.length + ' rooms');
+        renderBuildings();
+        if (screen === 'floors' && currentBuilding) {
+          openBuilding(currentBuilding);
+        }
+      }
+    }
+  } catch(e) {
+    console.log('Refresh error:', e);
+  }
+
+  if (btn) btn.classList.remove('spinning');
+}
+
+
 function showLogoutModal() {
   document.getElementById('logout-modal').classList.add('active');
 }
@@ -765,6 +827,7 @@ async function tryLogin() {
     }
 
     var cleaningService = validateData.cleaningService || '';
+    currentCleaningService = cleaningService;
     console.log('Cleaning service:', cleaningService);
 
   } catch(e) {
