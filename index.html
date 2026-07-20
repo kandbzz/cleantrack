@@ -681,19 +681,33 @@ async function dashSearch() {
       '</div>' +
       '<div class="dash-history-label" style="margin-top:14px;">Cleaning history</div>';
 
-    results.forEach(function(r) {
-      var s      = (r.Status || 'pending').toLowerCase();
-      var sColor = STATUS_COLORS[s] || STATUS_COLORS['pending'];
-      var sLabel = STATUS_LABELS[s] || r.Status || 'Unknown';
-      var date   = r.Date ? formatDate(r.Date) : '—';
-      html +=
-        '<div class="dash-history-row">' +
-          '<div class="dash-history-info">' +
-            '<div class="dash-history-time" style="font-size:13px; color:var(--gray-900); font-weight:500;">' + date + '</div>' +
-          '</div>' +
-          '<span class="dash-history-badge" style="' + sColor + '">' + sLabel + '</span>' +
-        '</div>';
+    // The two most recent full cleanings are already shown in the cards above.
+    // Exclude them from the history list so they don't appear twice.
+    var shownCompleteIds = [];
+    if (completedResults[0]) shownCompleteIds.push(completedResults[0].ID);
+    if (completedResults[1]) shownCompleteIds.push(completedResults[1].ID);
+
+    var historyItems = results.filter(function(r) {
+      return shownCompleteIds.indexOf(r.ID) === -1;
     });
+
+    if (historyItems.length === 0) {
+      html += '<div class="dash-empty-sub" style="padding:12px 0;">No other cleaning records.</div>';
+    } else {
+      historyItems.forEach(function(r) {
+        var s      = (r.Status || 'pending').toLowerCase();
+        var sColor = STATUS_COLORS[s] || STATUS_COLORS['pending'];
+        var typeLabel = s === 'complete' ? 'Full Cleaning' : (s === 'touch up completed' ? 'Touch-up' : (r.Status || 'Unknown'));
+        var date   = r.Date ? formatDate(r.Date) : '—';
+        html +=
+          '<div class="dash-history-row">' +
+            '<div class="dash-history-info">' +
+              '<div class="dash-history-time" style="font-size:13px; color:var(--gray-900); font-weight:500;">' + date + '</div>' +
+            '</div>' +
+            '<span class="dash-history-badge" style="' + sColor + '">' + typeLabel + '</span>' +
+          '</div>';
+      });
+    }
 
     html += '</div>';
     body.innerHTML = html;
