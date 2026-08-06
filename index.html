@@ -504,9 +504,9 @@ h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip
     </div>
     <div class="pa-footer">
       <div class="pa-progress-bar"><div class="pa-progress-fill" id="task-fill" style="width:0%"></div></div>
-      <div class="pa-progress-text" id="task-count-label">0 of 7 tasks complete</div>
-      <button class="pa-btn" id="done-btn" onclick="markStatus('complete')" style="margin-top:0; opacity:0.4; cursor:default;">Mark as complete</button>
-      <button class="pa-btn-secondary" onclick="markStatus('policed')">Touch-up Cleaning</button>
+      <div class="pa-progress-text" id="task-count-label">0 of 11 tasks done</div>
+      <button class="pa-btn" id="done-btn" onclick="markStatus('serviced')" style="margin-top:0; opacity:0.4; cursor:default;">Mark as serviced</button>
+      <button class="pa-btn-secondary" id="patrol-btn" onclick="markStatus('patrolled')">Patrolled</button>
     </div>
   </div>
 
@@ -531,11 +531,11 @@ const TASKS = [
 ];
 
 const STATUS_COLORS = {
-  complete:              'background:#e6f5ee;color:#1a7a4a',
-  'touch up completed':  'background:#f3eeff;color:#5b3a8c',
-  pending:               'background:#fef7e6;color:#7a5200'
+  serviced:   'background:#e6f5ee;color:#1a7a4a',
+  patrolled:  'background:#f3eeff;color:#5b3a8c',
+  pending:    'background:#fef7e6;color:#7a5200'
 };
-const STATUS_LABELS = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
+const STATUS_LABELS = { serviced: 'Serviced', patrolled: 'Patrolled', pending: 'Pending' };
 
 var currentCleaningService = '';
 
@@ -659,7 +659,7 @@ async function dashSearch() {
     var floor        = first.Floor       || '';
     var currentStatus = (first.Status || 'pending').toLowerCase();
 
-    var completedResults = results.filter(function(r) { return (r.Status || '').toLowerCase() === 'complete'; });
+    var completedResults = results.filter(function(r) { return (r.Status || '').toLowerCase() === 'serviced'; });
     var lastComplete  = completedResults[0] && completedResults[0].Date ? formatDate(completedResults[0].Date) : '—';
     var secondComplete = completedResults[1] && completedResults[1].Date ? formatDate(completedResults[1].Date) : '—';
 
@@ -670,17 +670,17 @@ async function dashSearch() {
       '</div>' +
       '<div class="dash-stat-row" style="margin-top:12px;">' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">Last fully cleaned</div>' +
+          '<div class="dash-stat-label">Last serviced</div>' +
           '<div class="dash-stat-value">' + lastComplete + '</div>' +
         '</div>' +
         '<div class="dash-stat">' +
-          '<div class="dash-stat-label">2nd last fully cleaned</div>' +
+          '<div class="dash-stat-label">2nd last serviced</div>' +
           '<div class="dash-stat-value">' + secondComplete + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="dash-history-label" style="margin-top:14px;">Cleaning history</div>';
 
-    // The two most recent full cleanings are already shown in the cards above.
+    // The two most recent servicings are already shown in the cards above.
     // Exclude them from the history list so they don't appear twice.
     var shownCompleteIds = [];
     if (completedResults[0]) shownCompleteIds.push(completedResults[0].ID);
@@ -696,7 +696,7 @@ async function dashSearch() {
       historyItems.forEach(function(r) {
         var s      = (r.Status || 'pending').toLowerCase();
         var sColor = STATUS_COLORS[s] || STATUS_COLORS['pending'];
-        var typeLabel = s === 'complete' ? 'Full Cleaning' : (s === 'touch up completed' ? 'Touch-up' : (r.Status || 'Unknown'));
+        var typeLabel = s === 'serviced' ? 'Serviced' : (s === 'patrolled' ? 'Patrolled' : (r.Status || 'Unknown'));
         var date   = r.Date ? formatDate(r.Date) : '—';
         html +=
           '<div class="dash-history-row">' +
@@ -924,19 +924,19 @@ function renderBuildings() {
   var html = '';
   Object.keys(buildings).sort().forEach(function(bName) {
     var rooms    = buildings[bName];
-    var complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
-    var touchup  = rooms.filter(function(r) { return r.status === 'touch up completed'; }).length;
+    var serviced = rooms.filter(function(r) { return r.status === 'serviced'; }).length;
+    var patrolled = rooms.filter(function(r) { return r.status === 'patrolled'; }).length;
     var pending  = rooms.filter(function(r) { return r.status === 'pending';  }).length;
-    var allDone  = complete === rooms.length && rooms.length > 0;
+    var allDone  = serviced === rooms.length && rooms.length > 0;
     var badge;
     if (allDone) {
-      badge = '<span class="pa-badge badge-done">All complete</span>';
+      badge = '<span class="pa-badge badge-done">All serviced</span>';
     } else {
       var parts = [];
-      parts.push(complete + ' complete');
-      parts.push(touchup  + ' touch-up');
-      parts.push(pending  + ' pending');
-      var cls = pending === 0 ? 'badge-done' : touchup > 0 || complete > 0 ? 'badge-inprog' : 'badge-pending';
+      parts.push(serviced + ' serviced');
+      parts.push(patrolled + ' patrolled');
+      parts.push(pending + ' pending');
+      var cls = pending === 0 ? 'badge-done' : patrolled > 0 || serviced > 0 ? 'badge-inprog' : 'badge-pending';
       badge = '<span class="pa-badge ' + cls + '">' + parts.join(' \u00b7 ') + '</span>';
     }
     html +=
@@ -981,7 +981,7 @@ function openBuilding(bName) {
   var rooms = allRooms.filter(function(r) { return r.buildingName === bName; });
 
   document.getElementById('floors-building-title').textContent = bName;
-  var complete = rooms.filter(function(r) { return r.status === 'complete'; }).length;
+  var complete = rooms.filter(function(r) { return r.status === 'serviced'; }).length;
   document.getElementById('floors-progress-header').textContent = complete + '/' + rooms.length;
 
   // Group by floor
@@ -992,8 +992,8 @@ function openBuilding(bName) {
     floors[f].push(r);
   });
 
-  var badgeClass  = { complete: 'badge-done', 'touch up completed': 'badge-policed', pending: 'badge-pending' };
-  var badgeLabel  = { complete: 'Complete', 'touch up completed': 'Touch-up Completed', pending: 'Pending' };
+  var badgeClass  = { serviced: 'badge-done', patrolled: 'badge-policed', pending: 'badge-pending' };
+  var badgeLabel  = { serviced: 'Serviced', patrolled: 'Patrolled', pending: 'Pending' };
 
   var html = '';
   // Sort floors: handle numeric and alphanumeric (B01, 1, 2, 10...)
@@ -1005,11 +1005,11 @@ function openBuilding(bName) {
 
   floorKeys.forEach(function(floor) {
     var floorRooms   = floors[floor];
-    var floorDone    = floorRooms.filter(function(r) { return r.status === 'complete'; }).length;
+    var floorDone    = floorRooms.filter(function(r) { return r.status === 'serviced'; }).length;
     html +=
       '<div class="floor-group-header">' +
         '<span class="floor-group-title">Floor ' + floor + '</span>' +
-        '<span class="floor-group-count">' + floorDone + '/' + floorRooms.length + ' complete</span>' +
+        '<span class="floor-group-count">' + floorDone + '/' + floorRooms.length + ' serviced</span>' +
       '</div>';
     floorRooms.forEach(function(r) {
       var status      = r.status || 'pending';
@@ -1066,10 +1066,14 @@ function renderTasks() {
   var allDone    = done === actionable && actionable >= 0;
   var pct        = actionable > 0 ? Math.round(done / actionable * 100) : 100;
   document.getElementById('task-fill').style.width        = pct + '%';
-  document.getElementById('task-count-label').textContent = done + ' of ' + actionable + ' tasks complete' + (naCount > 0 ? ' (' + naCount + ' N/A)' : '');
+  document.getElementById('task-count-label').textContent = done + ' of ' + actionable + ' tasks done' + (naCount > 0 ? ' (' + naCount + ' N/A)' : '');
   var btn = document.getElementById('done-btn');
   btn.style.opacity = allDone ? '1'       : '0.4';
   btn.style.cursor  = allDone ? 'pointer' : 'default';
+  // Patrolled button is the inverse — available until everything is done, then greyed out
+  var patrolBtn = document.getElementById('patrol-btn');
+  patrolBtn.style.opacity = allDone ? '0.4'     : '1';
+  patrolBtn.style.cursor  = allDone ? 'default'  : 'pointer';
 }
 
 function toggleTask(i) {
@@ -1087,11 +1091,11 @@ function toggleNA(i) {
 
 // ─── Submit ───────────────────────────────────────────────────────────────────
 async function markStatus(status) {
-  if (status === 'complete') {
-    var states = taskStates[currentRoomIdx];
-    var allDone = states.every(function(s) { return s === 'checked' || s === 'na'; });
-    if (!allDone) return;
-  }
+  var states = taskStates[currentRoomIdx];
+  var allDone = states.every(function(s) { return s === 'checked' || s === 'na'; });
+  // Serviced requires everything done; Patrolled is blocked once everything is done
+  if (status === 'serviced' && !allDone) return;
+  if (status === 'patrolled' && allDone) return;
 
   var room    = allRooms.find(function(r) { return String(r.id) === String(currentRoomIdx); });
   if (!room) return;
@@ -1112,14 +1116,14 @@ async function markStatus(status) {
         building: room.buildingName,
         room:     room.roomNumber,
         worker:   worker,
-        status:   status === 'policed' ? 'Touch Up Completed' : 'Complete',
+        status:   status === 'patrolled' ? 'Patrolled' : 'Serviced',
         comment:  comment
       })
     });
     if (res.ok || res.status === 202) {
       msg.className   = 'pa-overlay-success';
       msg.textContent = 'Submitted successfully!';
-      room.status = status === 'policed' ? 'touch up completed' : 'complete';
+      room.status = status === 'patrolled' ? 'patrolled' : 'serviced';
       renderBuildings();
       setTimeout(function() {
         overlay.classList.remove('active');
